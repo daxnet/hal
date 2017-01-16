@@ -32,6 +32,8 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
+using Hal.Converters;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Hal
@@ -159,6 +161,24 @@ namespace Hal
         public object GetProperty(string name)
         {
             return this.properties[name];
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var serializerSettings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+                Converters = new[] { new LinkItemConverter() }
+            };
+
+            return JsonConvert.SerializeObject(this, serializerSettings);
         }
         #endregion
 

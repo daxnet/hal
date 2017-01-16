@@ -1,9 +1,9 @@
 ﻿{
   "version": "0.999.0-*",
 
-  "authors": [ "daxnet" ],
+  "authors": [ "Sunny Chen" ],
   "description": "C#/.NET Core implementation of Hypertext Application Language (HAL).",
-  "copyright": "Copyright (C) 2017 by daxnet.",
+  "copyright": "Copyright (C) 2017 by Sunny Chen.",
 
   "dependencies": {
     "NETStandard.Library": "1.6.1",
@@ -31,7 +31,7 @@
   "packOptions": {
     "summary": "HAL",
     "licenseUrl": "https://github.com/daxnet/hal/blob/master/LICENSE",
-    "owners": [ "daxnet" ],
+    "owners": [ "Sunny Chen" ],
     "requireLicenseAcceptance": true,
     "tags": [ "hal" ],
     "repository": {

@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "0.999.0-*",
   "testRunner": "xunit",
 
@@ -6,7 +6,8 @@
     "xunit": "2.2.0-beta4-build3444",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Moq": "4.6.38-alpha",
-    "NETStandard.Library": "1.6.1"
+    "NETStandard.Library": "1.6.1",
+    "Hal": "0.999.0-*"
   },
 
   "frameworks": {
