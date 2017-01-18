@@ -1,8 +1,4 @@
 ﻿using Hal.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Hal.Tests
@@ -12,9 +8,16 @@ namespace Hal.Tests
         [Fact]
         public void BuilderTest()
         {
-            var builder = new ResourceBuilder(new { currentlyProcessing = 14, shippedToday = 20 });
-            builder.AddLink("self").WithLinkItem("/orders");
-            var resource = builder.Build();
+            var builder = new ResourceBuilder();
+            var resource = builder
+                .WithState(new { currentlyProcessing = 14, shippedToday = 20 })
+                .AddSelfLink().WithLinkItem("/orders")
+                .AddCuriesLink().WithLinkItem("http://example.com/docs/rels/{rel}", "ea", true)
+                .AddLink("next").WithLinkItem("/orders?page=2")
+                .AddLink("ea:find").WithLinkItem("/orders{?id}", templated: true)
+                .Build();
+
+            //var resource = builder.Build();
             var json = resource.ToString();
         }
     }

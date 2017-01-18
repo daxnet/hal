@@ -9,11 +9,11 @@ namespace Hal.Builders
 
     public sealed class ResourceBuilder : IResourceBuilder
     {
-        private readonly Resource resource;
+        private readonly Resource resource = new Resource();
 
-        public ResourceBuilder(object state)
+        public ResourceBuilder()
         {
-            this.resource = new Resource(state);
+            
         }
 
         public Resource Build()

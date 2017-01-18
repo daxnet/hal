@@ -7,7 +7,8 @@ namespace Hal.Builders
 {
     public interface ILinkItemBuilder : IBuilder
     {
-
+        string Rel { get; }
+        bool EnforcingArrayConverting { get; }
     }
 
     internal sealed class LinkItemBuilder : Builder, ILinkItemBuilder
@@ -42,6 +43,10 @@ namespace Hal.Builders
             this.enforcingArrayConverting = enforcingArrayConverting;
             this.additionalProperties = additionalProperties;
         }
+
+        public string Rel => this.rel;
+
+        public bool EnforcingArrayConverting => this.enforcingArrayConverting;
 
         protected override Resource DoBuild(Resource resource)
         {
