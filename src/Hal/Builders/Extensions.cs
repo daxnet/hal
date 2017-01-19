@@ -29,6 +29,11 @@ namespace Hal.Builders
         {
             return new LinkBuilder(builder, "curies", true);
         }
+
+        public static IEmbeddedResourceBuilder AddEmbeddedResource(this IResourceStateBuilder builder, string name, IBuilder resourceBuilder)
+        {
+            return new EmbeddedResourceBuilder(builder, name, resourceBuilder);
+        }
         #endregion
 
         #region ILinkBuilder Extensions
@@ -67,6 +72,11 @@ namespace Hal.Builders
         {
             return new LinkItemBuilder(builder, builder.Rel, href, name, templated,
                 type, deprecation, profile, title, hreflang, builder.EnforcingArrayConverting, additionalProperties);
+        }
+
+        public static IEmbeddedResourceBuilder AddEmbeddedResource(this ILinkItemBuilder builder, string name, IBuilder resourceBuilder)
+        {
+            return new EmbeddedResourceBuilder(builder, name, resourceBuilder);
         }
         #endregion
     }

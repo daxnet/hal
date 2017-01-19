@@ -40,6 +40,17 @@ namespace Hal
     /// <seealso cref="Hal.IEmbeddedResource" />
     public sealed class EmbeddedResource : IEmbeddedResource
     {
+        #region Ctor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmbeddedResource"/> class.
+        /// </summary>
+        public EmbeddedResource()
+        {
+            this.Resources = new ResourceCollection();
+        }
+        #endregion
+
         #region Public Properties        
         /// <summary>
         /// Gets or sets the name of the embedded resource.

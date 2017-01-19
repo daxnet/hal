@@ -20,7 +20,30 @@ namespace Hal.Builders
 
         protected override Resource DoBuild(Resource resource)
         {
-            // TODO: Add resource build logic here
+            if (resource.EmbeddedResources == null)
+            {
+                resource.EmbeddedResources = new EmbeddedResourceCollection();
+            }
+
+            var embeddedResource = resource.EmbeddedResources.FirstOrDefault(x => x.Name.Equals(this.name));
+            if (embeddedResource != null)
+            {
+                embeddedResource.Resources.Add(this.resourceBuilder.Build());
+            }
+            else
+            {
+                var newEmbeddedResource = new EmbeddedResource
+                {
+                    Name = this.name,
+                    Resources = new ResourceCollection
+                    {
+                        this.resourceBuilder.Build()
+                    }
+                };
+
+                resource.EmbeddedResources = new EmbeddedResourceCollection { newEmbeddedResource };
+            }
+
             return resource;
         }
     }

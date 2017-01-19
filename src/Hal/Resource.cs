@@ -51,7 +51,6 @@ namespace Hal
             new LinkCollectionConverter(), new ResourceConverter()
         };
 
-        private readonly List<IEmbeddedResource> embeddedResources = new List<IEmbeddedResource>();
         #endregion
 
         /// <summary>
@@ -75,7 +74,7 @@ namespace Hal
         /// <value>
         /// The embedded resources.
         /// </value>
-        public IEnumerable<IEmbeddedResource> EmbeddedResources => embeddedResources;
+        public EmbeddedResourceCollection EmbeddedResources { get; set; }
 
         /// <summary>
         /// Gets or sets the links.
@@ -96,23 +95,6 @@ namespace Hal
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Adds the embedded resource to the current resource.
-        /// </summary>
-        /// <param name="embeddedResource">The embedded resource to be added.</param>
-        public void AddEmbeddedResource(IEmbeddedResource embeddedResource)
-        {
-            this.embeddedResources.Add(embeddedResource);
-        }
-
-        /// <summary>
-        /// Clears the added embedded resource.
-        /// </summary>
-        public void ClearEmbeddedResources()
-        {
-            this.embeddedResources.Clear();
-        }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

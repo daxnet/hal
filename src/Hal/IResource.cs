@@ -64,17 +64,6 @@ namespace Hal
         /// <value>
         /// The embedded resources.
         /// </value>
-        IEnumerable<IEmbeddedResource> EmbeddedResources { get; }
-
-        /// <summary>
-        /// Adds the embedded resource to the current resource.
-        /// </summary>
-        /// <param name="embeddedResource">The embedded resource to be added.</param>
-        void AddEmbeddedResource(IEmbeddedResource embeddedResource);
-
-        /// <summary>
-        /// Clears the added embedded resource.
-        /// </summary>
-        void ClearEmbeddedResources();
+        EmbeddedResourceCollection EmbeddedResources { get; }
     }
 }

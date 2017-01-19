@@ -51,10 +51,9 @@ namespace Hal.Tests
 
             var resource = new Resource(new { currentlyProcessing = 14, shippedToday = 20 })
             {
-                Links = links
+                Links = links,
+                EmbeddedResources = new EmbeddedResourceCollection { embedded }
             };
-
-            resource.AddEmbeddedResource(embedded);
 
             var hal = resource.ToString();
         }
