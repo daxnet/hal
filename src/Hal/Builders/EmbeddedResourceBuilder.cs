@@ -5,18 +5,21 @@ using System.Threading.Tasks;
 
 namespace Hal.Builders
 {
-    public interface IEmbeddedResourceBuilder : IBuilder { }
+    public interface IEmbeddedResourceBuilder : IBuilder
+    {
+        string Name { get; }
+    }
 
     internal sealed class EmbeddedResourceBuilder : Builder, IEmbeddedResourceBuilder
     {
         private readonly string name;
-        private readonly IBuilder resourceBuilder;
 
-        public EmbeddedResourceBuilder(IBuilder context, string name, IBuilder resourceBuilder) : base(context)
+        public EmbeddedResourceBuilder(IBuilder context, string name) : base(context)
         {
             this.name = name;
-            this.resourceBuilder = resourceBuilder;
         }
+
+        public string Name => this.name;
 
         protected override Resource DoBuild(Resource resource)
         {
@@ -26,22 +29,14 @@ namespace Hal.Builders
             }
 
             var embeddedResource = resource.EmbeddedResources.FirstOrDefault(x => x.Name.Equals(this.name));
-            if (embeddedResource != null)
+            if (embeddedResource == null)
             {
-                embeddedResource.Resources.Add(this.resourceBuilder.Build());
-            }
-            else
-            {
-                var newEmbeddedResource = new EmbeddedResource
+                embeddedResource = new EmbeddedResource
                 {
-                    Name = this.name,
-                    Resources = new ResourceCollection
-                    {
-                        this.resourceBuilder.Build()
-                    }
+                    Name = this.name
                 };
 
-                resource.EmbeddedResources = new EmbeddedResourceCollection { newEmbeddedResource };
+                resource.EmbeddedResources.Add(embeddedResource);
             }
 
             return resource;

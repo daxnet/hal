@@ -20,7 +20,10 @@ namespace Hal.Tests
                     }
                 },
                 new Link("next") { Items = new LinkItemCollection { new LinkItem("/orders?page=2") } },
-                new Link("ea:find") { Items = new LinkItemCollection { new LinkItem("/orders{?id}") { Templated = true } } }
+                new Link("ea:find")
+                {
+                    Items = new LinkItemCollection { new LinkItem("/orders{?id}") { Templated = true } }
+                }
             };
 
             var embedded = new EmbeddedResource
@@ -32,18 +35,36 @@ namespace Hal.Tests
                     {
                         Links = new LinkCollection
                         {
-                            new Link("self") { Items = new LinkItemCollection { new LinkItem("/orders/123") } },
-                            new Link("ea:basket") { Items = new LinkItemCollection { new LinkItem("/baskets/98712") } },
-                            new Link("ea:customer") { Items = new LinkItemCollection { new LinkItem("/customers/7809") } },
+                            new Link("self")
+                            {
+                                Items = new LinkItemCollection { new LinkItem("/orders/123") }
+                            },
+                            new Link("ea:basket")
+                            {
+                                Items = new LinkItemCollection { new LinkItem("/baskets/98712") }
+                            },
+                            new Link("ea:customer")
+                            {
+                                Items = new LinkItemCollection { new LinkItem("/customers/7809") }
+                            },
                         }
                     },
                     new Resource(new { total = 20.00F, currency = "USD", status = "processing" })
                     {
                         Links = new LinkCollection
                         {
-                            new Link("self") { Items = new LinkItemCollection { new LinkItem("/orders/124") } },
-                            new Link("ea:basket") { Items = new LinkItemCollection { new LinkItem("/baskets/97213") } },
-                            new Link("ea:customer") { Items = new LinkItemCollection { new LinkItem("/customers/12369") } },
+                            new Link("self")
+                            {
+                                Items = new LinkItemCollection { new LinkItem("/orders/124") }
+                            },
+                            new Link("ea:basket")
+                            {
+                                Items = new LinkItemCollection { new LinkItem("/baskets/97213") }
+                            },
+                            new Link("ea:customer")
+                            {
+                                Items = new LinkItemCollection { new LinkItem("/customers/12369") }
+                            },
                         }
                     }
                 }

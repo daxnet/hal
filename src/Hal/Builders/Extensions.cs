@@ -30,9 +30,9 @@ namespace Hal.Builders
             return new LinkBuilder(builder, "curies", true);
         }
 
-        public static IEmbeddedResourceBuilder AddEmbeddedResource(this IResourceStateBuilder builder, string name, IBuilder resourceBuilder)
+        public static IEmbeddedResourceBuilder AddEmbedded(this IResourceStateBuilder builder, string name)
         {
-            return new EmbeddedResourceBuilder(builder, name, resourceBuilder);
+            return new EmbeddedResourceBuilder(builder, name);
         }
         #endregion
 
@@ -74,9 +74,43 @@ namespace Hal.Builders
                 type, deprecation, profile, title, hreflang, builder.EnforcingArrayConverting, additionalProperties);
         }
 
-        public static IEmbeddedResourceBuilder AddEmbeddedResource(this ILinkItemBuilder builder, string name, IBuilder resourceBuilder)
+        public static IEmbeddedResourceBuilder AddEmbedded(this ILinkItemBuilder builder, string name)
         {
-            return new EmbeddedResourceBuilder(builder, name, resourceBuilder);
+            return new EmbeddedResourceBuilder(builder, name);
+        }
+        #endregion
+
+        #region IEmbeddedResourceBuilder Extensions
+        public static IEmbeddedResourceItemBuilder Resource(this IEmbeddedResourceBuilder builder, IBuilder resourceBuilder)
+        {
+            return new EmbeddedResourceItemBuilder(builder, builder.Name, resourceBuilder);
+        }
+        #endregion
+
+        #region IEmbeddedResourceItemBuilder Extensions
+        public static IEmbeddedResourceItemBuilder Resource(this IEmbeddedResourceItemBuilder builder, IBuilder resourceBuilder)
+        {
+            return new EmbeddedResourceItemBuilder(builder, builder.Name, resourceBuilder);
+        }
+
+        public static ILinkBuilder AddLink(this IEmbeddedResourceItemBuilder builder, string rel)
+        {
+            return new LinkBuilder(builder, rel, false);
+        }
+
+        public static ILinkBuilder AddSelfLink(this IEmbeddedResourceItemBuilder builder)
+        {
+            return new LinkBuilder(builder, "self", false);
+        }
+
+        public static ILinkBuilder AddCuriesLink(this IEmbeddedResourceItemBuilder builder)
+        {
+            return new LinkBuilder(builder, "curies", true);
+        }
+
+        public static IEmbeddedResourceBuilder AddEmbedded(this IEmbeddedResourceItemBuilder builder, string name)
+        {
+            return new EmbeddedResourceBuilder(builder, name);
         }
         #endregion
     }
