@@ -9,6 +9,6 @@ $files = Get-ChildItem . -include project.json,AssemblyInfo.cs -Recurse
 foreach ($file in $files)
 {
 	(Get-Content $file.FullName) |
-	ForEach-Object { $_ -replace "0.9999.0.9999", "$($version)" } |
+	ForEach-Object { $_ -replace "0.999.0", "$($version)" } |
 	Set-Content $file.FullName
 }
