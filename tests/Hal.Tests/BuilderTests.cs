@@ -30,5 +30,16 @@ namespace Hal.Tests
 
             var json = resource.ToString();
         }
+
+        [Fact]
+        public void BuilderTest2()
+        {
+            var state = new string[] { "value1", "value2" };
+            var builder = new ResourceBuilder()
+                .WithState(new { records = 1 })
+                .AddEmbedded("values")
+                    .Resource(new ResourceBuilder().WithState(state));
+            var json = builder.Build().ToString();
+        }
     }
 }

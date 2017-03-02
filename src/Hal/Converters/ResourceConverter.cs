@@ -81,6 +81,17 @@ namespace Hal.Converters
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var resource = (Resource)value;
+            JToken obj = null;
+
+            if (resource.State != null)
+            {
+                obj = JToken.FromObject(resource.State);
+                if (obj != null && obj.Type == JTokenType.Array)
+                {
+                    obj.WriteTo(writer);
+                    return;
+                }
+            }
 
             writer.WriteStartObject();
 
@@ -89,15 +100,8 @@ namespace Hal.Converters
                 serializer.Serialize(writer, resource.Links);
             }
 
-            if (resource.State != null)
+            if (obj != null)
             {
-                //serializer.Serialize(writer, resource.State);
-                var obj = JToken.FromObject(resource.State);
-                //if (obj.Type == JTokenType.Array)
-                //{
-                //    throw new InvalidOperationException("The state object cannot be an array. Consider putting an array of objects in the _embedded resource.");
-                //}
-
                 if (obj.Type != JTokenType.Object)
                 {
                     obj.WriteTo(writer);
