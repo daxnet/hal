@@ -41,5 +41,14 @@ namespace Hal.Tests
                     .Resource(new ResourceBuilder().WithState(state));
             var json = builder.Build().ToString();
         }
+
+        [Fact]
+        public void BuilderTest3()
+        {
+            var state = "abc";
+            var builder = new ResourceBuilder()
+                .WithState(state);
+            var json = builder.Build().ToString();
+        }
     }
 }

@@ -86,7 +86,7 @@ namespace Hal.Converters
             if (resource.State != null)
             {
                 obj = JToken.FromObject(resource.State);
-                if (obj != null && obj.Type == JTokenType.Array)
+                if (obj != null && obj.Type != JTokenType.Object)
                 {
                     obj.WriteTo(writer);
                     return;
@@ -102,10 +102,10 @@ namespace Hal.Converters
 
             if (obj != null)
             {
-                if (obj.Type != JTokenType.Object)
-                {
-                    obj.WriteTo(writer);
-                }
+                //if (obj.Type != JTokenType.Object)
+                //{
+                //    obj.WriteTo(writer);
+                //}
 
                 var @object = (JObject)obj;
                 foreach (var prop in @object.Properties())

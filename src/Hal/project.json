@@ -29,11 +29,11 @@
   },
 
   "packOptions": {
-    "summary": "HAL",
+    "summary": "C#/.NET Core implementation of Hypertext Application Language (HAL) with Fluent API support.",
     "licenseUrl": "https://github.com/daxnet/hal/blob/master/LICENSE",
-    "owners": [ "Sunny Chen" ],
+    "owners": [ "Sunny Chen", "daxnet" ],
     "requireLicenseAcceptance": true,
-    "tags": [ "hal" ],
+    "tags": [ "hal", "hypertext-application-language" ],
     "repository": {
       "url": "https://github.com/daxnet/hal"
     }
