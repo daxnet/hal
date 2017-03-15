@@ -1,18 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Hal", "Hal\Hal.xproj", "{3FE91D99-C111-4460-807A-3D8CAF6FDC50}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Hal.Tests", "..\tests\Hal.Tests\Hal.Tests.xproj", "{FE4B2D55-41DE-4AFA-97F6-B0FDB5A4EB20}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7CAA577D-160E-4EB9-814C-2F2AB812A469}"
 	ProjectSection(SolutionItems) = preProject
-		..\global.json = ..\global.json
-		..\build\local_publish.ps1 = ..\build\local_publish.ps1
-		..\build\subst_version.ps1 = ..\build\subst_version.ps1
+		global.json = global.json
+		build\local_publish.ps1 = build\local_publish.ps1
+		build\subst_version.ps1 = build\subst_version.ps1
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hal", "src\Hal\Hal.csproj", "{3FE91D99-C111-4460-807A-3D8CAF6FDC50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hal.Tests", "tests\Hal.Tests\Hal.Tests.csproj", "{FE4B2D55-41DE-4AFA-97F6-B0FDB5A4EB20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
