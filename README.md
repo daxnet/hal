@@ -12,6 +12,15 @@ Following class diagram shows the HAL model that has been implemented by this pr
 ![HAL class diagram](https://raw.githubusercontent.com/daxnet/hal/master/docs/HalClassDiagram.png)
 
 ## How to Use
+### Adding the Package
+
+1. In Visual Studio 2015/2017, add `https://www.myget.org/F/daxnet-utils/api/v3/index.json` as one of your package source
+2. Execute following command in Package Manager Console from within Visual Studio to add the HAL package to your selected project
+
+	`Install-Package Hal`
+
+
+### Example
 The following C# Fluent API code:
 ```cs
 var builder = new ResourceBuilder();
