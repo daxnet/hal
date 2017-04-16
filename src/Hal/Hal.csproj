@@ -5,7 +5,7 @@
     <Copyright>Copyright (C) 2017 by Sunny Chen.</Copyright>
     <VersionPrefix>0.999.0</VersionPrefix>
     <Authors>Sunny Chen</Authors>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
     <AssemblyName>Hal</AssemblyName>
     <AssemblyOriginatorKeyFile>../../tools/hal.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
