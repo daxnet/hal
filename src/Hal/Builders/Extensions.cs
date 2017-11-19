@@ -32,6 +32,7 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 
 namespace Hal.Builders
@@ -92,10 +93,12 @@ namespace Hal.Builders
         /// </summary>
         /// <param name="builder">The builder.</param>
         /// <param name="name">The name of the embedded resource collection.</param>
+        /// <param name="enforcingArrayConverting">The <see cref="Boolean"/> value which indicates whether the embedded resource state
+        /// should be always converted as an array even if there is only one state for that embedded resource.</param>
         /// <returns></returns>
-        public static IEmbeddedResourceBuilder AddEmbedded(this IResourceStateBuilder builder, string name)
+        public static IEmbeddedResourceBuilder AddEmbedded(this IResourceStateBuilder builder, string name, bool enforcingArrayConverting = false)
         {
-            return new EmbeddedResourceBuilder(builder, name);
+            return new EmbeddedResourceBuilder(builder, name, enforcingArrayConverting);
         }
         #endregion
 
@@ -193,10 +196,12 @@ namespace Hal.Builders
         /// </summary>
         /// <param name="builder">The builder.</param>
         /// <param name="name">The name of the embedded resource collection.</param>
+        /// <param name="enforcingArrayConverting">The <see cref="Boolean"/> value which indicates whether the embedded resource state
+        /// should be always converted as an array even if there is only one state for that embedded resource.</param>
         /// <returns></returns>
-        public static IEmbeddedResourceBuilder AddEmbedded(this ILinkItemBuilder builder, string name)
+        public static IEmbeddedResourceBuilder AddEmbedded(this ILinkItemBuilder builder, string name, bool enforcingArrayConverting = false)
         {
-            return new EmbeddedResourceBuilder(builder, name);
+            return new EmbeddedResourceBuilder(builder, name, enforcingArrayConverting);
         }
         #endregion
 
@@ -262,10 +267,12 @@ namespace Hal.Builders
         /// </summary>
         /// <param name="builder">The builder.</param>
         /// <param name="name">The name of the embedded resource collection.</param>
+        /// <param name="enforcingArrayConverting">The <see cref="Boolean"/> value which indicates whether the embedded resource state
+        /// should be always converted as an array even if there is only one state for that embedded resource.</param>
         /// <returns></returns>
-        public static IEmbeddedResourceBuilder AddEmbedded(this IEmbeddedResourceItemBuilder builder, string name)
+        public static IEmbeddedResourceBuilder AddEmbedded(this IEmbeddedResourceItemBuilder builder, string name, bool enforcingArrayConverting = false)
         {
-            return new EmbeddedResourceBuilder(builder, name);
+            return new EmbeddedResourceBuilder(builder, name, enforcingArrayConverting);
         }
         #endregion
     }

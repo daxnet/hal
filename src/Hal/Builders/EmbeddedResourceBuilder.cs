@@ -32,6 +32,7 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
+using System;
 using System.Linq;
 
 namespace Hal.Builders
@@ -62,6 +63,7 @@ namespace Hal.Builders
     {
         #region Private Fields
         private readonly string name;
+        private readonly bool enforcingArrayConverting;
         #endregion
 
         #region Ctor        
@@ -70,9 +72,12 @@ namespace Hal.Builders
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="name">The name of the embedded resource collection.</param>
-        public EmbeddedResourceBuilder(IBuilder context, string name) : base(context)
+        /// <param name="enforcingArrayConverting">The <see cref="Boolean"/> value which indicates whether the embedded resource state
+        /// should be always converted as an array even if there is only one state for that embedded resource.</param>
+        public EmbeddedResourceBuilder(IBuilder context, string name, bool enforcingArrayConverting = false) : base(context)
         {
             this.name = name;
+            this.enforcingArrayConverting = enforcingArrayConverting;
         }
         #endregion
 
@@ -98,7 +103,7 @@ namespace Hal.Builders
         {
             if (resource.EmbeddedResources == null)
             {
-                resource.EmbeddedResources = new EmbeddedResourceCollection();
+                resource.EmbeddedResources = new EmbeddedResourceCollection(this.enforcingArrayConverting);
             }
 
             var embeddedResource = resource.EmbeddedResources.FirstOrDefault(x => x.Name.Equals(this.name));

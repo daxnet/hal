@@ -53,10 +53,10 @@ namespace Hal
         /// <summary>
         /// Initializes a new instance of the <see cref="LinkItemCollection"/> class.
         /// </summary>
-        /// <param name="enforcingArraryConverting">if set to <c>true</c> [enforcing arrary converting].</param>
-        public LinkItemCollection(bool enforcingArraryConverting = false)
+        /// <param name="enforcingArrayConverting">if set to <c>true</c> [enforcing arrary converting].</param>
+        public LinkItemCollection(bool enforcingArrayConverting = false)
         {
-            this.EnforcingArraryConverting = enforcingArraryConverting;
+            this.EnforcingArrayConverting = enforcingArrayConverting;
         }
         #endregion
 
@@ -78,7 +78,7 @@ namespace Hal
         /// <value>
         /// <c>true</c> if the generated Json representation should be in an array format; otherwise, <c>false</c>.
         /// </value>
-        public bool EnforcingArraryConverting { get; }
+        public bool EnforcingArrayConverting { get; }
 
         #endregion
 

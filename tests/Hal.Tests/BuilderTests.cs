@@ -15,7 +15,7 @@ namespace Hal.Tests
                 .AddCuriesLink().WithLinkItem("http://example.com/docs/rels/{rel}", "ea", true)
                 .AddLink("next").WithLinkItem("/orders?page=2")
                 .AddLink("ea:find").WithLinkItem("/orders{?id}", templated: true)
-                .AddEmbedded("ea:order")
+                .AddEmbedded("ea:order", true)
                     .Resource(new ResourceBuilder()
                         .WithState(new { total = 30.00F, currency = "USD", status = "shipped" })
                         .AddSelfLink().WithLinkItem("/orders/123")

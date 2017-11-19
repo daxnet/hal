@@ -83,14 +83,14 @@ namespace Hal.Converters
 
             if (collection.Count == 1)
             {
-                if (collection.EnforcingArraryConverting)
+                if (collection.EnforcingArrayConverting)
                 {
                     writer.WriteStartArray();
                 }
 
                 serializer.Serialize(writer, collection.First());
 
-                if (collection.EnforcingArraryConverting)
+                if (collection.EnforcingArrayConverting)
                 {
                     writer.WriteEndArray();
                 }

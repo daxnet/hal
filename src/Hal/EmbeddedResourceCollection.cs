@@ -43,9 +43,19 @@ namespace Hal
     /// <seealso cref="System.Collections.Generic.ICollection{Hal.IEmbeddedResource}" />
     public sealed class EmbeddedResourceCollection : ICollection<IEmbeddedResource>
     {
-        #region Ctor
+        #region Private Fields
         private readonly List<IEmbeddedResource> items = new List<IEmbeddedResource>();
         #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmbeddedResourceCollection"/> class.
+        /// </summary>
+        /// <param name="enforcingArrayConverting">If set to <c>true</c>, the embedded resource will be converted to an array
+        /// even if it only contains one element.</param>
+        public EmbeddedResourceCollection(bool enforcingArrayConverting = false)
+        {
+            this.EnforcingArrayConverting = enforcingArrayConverting;
+        }
 
         #region Public Properties
 
@@ -58,6 +68,12 @@ namespace Hal
         /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
         /// </summary>
         public bool IsReadOnly => false;
+
+        /// <summary>
+        /// Gets a value indicating whether the embedded resource will be converted to an array
+        /// even if it only contains one element.
+        /// </summary>
+        public bool EnforcingArrayConverting { get; }
         #endregion
 
         #region Public Methods

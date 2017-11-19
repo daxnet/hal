@@ -123,7 +123,8 @@ namespace Hal.Converters
                     writer.WritePropertyName(embeddedResource.Name);
                     if (embeddedResource.Resources != null && embeddedResource.Resources.Count > 0)
                     {
-                        if (embeddedResource.Resources.Count == 1)
+                        if (!resource.EmbeddedResources.EnforcingArrayConverting &&
+                            embeddedResource.Resources.Count == 1)
                         {
                             //writer.WriteStartObject();
                             var first = embeddedResource.Resources.First();
