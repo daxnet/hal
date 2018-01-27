@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,6 +78,85 @@ namespace Hal.Tests
             };
 
             var hal = resource.ToString();
+        }
+
+        [Fact]
+        public void EmbededListTest()
+        {
+            var halResoruce = new Resource(new { total = 100f, description = "test" });
+
+            var embeddedResources = new EmbeddedResourceCollection();
+            var resourcesCollection = new ResourceCollection();
+            resourcesCollection.Add(new Resource(new { description = "item 1" }));
+            resourcesCollection.Add(new Resource(new { description = "item 2" }));
+            resourcesCollection.Add(new Resource(new { description = "item 3" }));
+            resourcesCollection.Add(new Resource(new { description = "item 4" }));
+
+            var anotherResource = new Resource(new { code = "C001", value = 10 });
+
+            var embeddedResourceList = new EmbeddedResource
+            {
+                Name = "List",
+                Resources = resourcesCollection,
+                EnforcingArrayConverting = true
+            };
+            var anotherEmbeddedResource = new EmbeddedResource
+            {
+                Name = "AnotherResource",
+                Resources = new ResourceCollection { anotherResource }
+            };
+
+            embeddedResources.Add(embeddedResourceList);
+            embeddedResources.Add(anotherEmbeddedResource);
+
+            halResoruce.EmbeddedResources = embeddedResources;
+
+            IDictionary<string, JToken> result = JObject.Parse(halResoruce.ToString());
+
+            Assert.True(result.ContainsKey("total"));
+            Assert.True(result.ContainsKey("description"));
+            Assert.Equal(4, result["_embedded"]["List"].Children().Count());
+            Assert.Equal("item 1", result["_embedded"]["List"].Children().First()["description"].ToString());
+            Assert.Equal("C001", result["_embedded"]["AnotherResource"]["code"].ToString());
+            Assert.Equal("10", result["_embedded"]["AnotherResource"]["value"].ToString());
+        }
+
+        [Fact]
+        public void EmbededListTestWithOnlyOneElement()
+        {
+            var halResoruce = new Resource(new { total = 100f, description = "test" });
+
+            var embeddedResources = new EmbeddedResourceCollection();
+            var resourcesCollection = new ResourceCollection();
+            resourcesCollection.Add(new Resource(new { description = "item 1" }));
+
+            var anotherResource = new Resource(new { code = "C001", value = 10 });
+
+            var embeddedResourceList = new EmbeddedResource
+            {
+                Name = "List",
+                Resources = resourcesCollection,
+                EnforcingArrayConverting = true
+            };
+            var anotherEmbeddedResource = new EmbeddedResource
+            {
+                Name = "AnotherResource",
+                Resources = new ResourceCollection { anotherResource } 
+            };
+
+            embeddedResources.Add(embeddedResourceList);
+            embeddedResources.Add(anotherEmbeddedResource);
+
+            halResoruce.EmbeddedResources = embeddedResources;
+
+            IDictionary<string, JToken> result = JObject.Parse(halResoruce.ToString());
+
+            Assert.True(result.ContainsKey("total"));
+            Assert.True(result.ContainsKey("description"));
+            Assert.Single(result["_embedded"]["List"].Children());
+            Assert.Equal("item 1", result["_embedded"]["List"].Children().First()["description"].ToString());
+            Assert.Equal("C001", result["_embedded"]["AnotherResource"]["code"].ToString());
+            Assert.Equal("10", result["_embedded"]["AnotherResource"]["value"].ToString());
         }
     }
 }

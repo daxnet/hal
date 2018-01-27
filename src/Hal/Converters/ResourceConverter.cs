@@ -124,6 +124,7 @@ namespace Hal.Converters
                     if (embeddedResource.Resources != null && embeddedResource.Resources.Count > 0)
                     {
                         if (!resource.EmbeddedResources.EnforcingArrayConverting &&
+                            !embeddedResource.EnforcingArrayConverting &&
                             embeddedResource.Resources.Count == 1)
                         {
                             //writer.WriteStartObject();

@@ -69,6 +69,12 @@ namespace Hal
         /// instance.
         /// </value>
         public ResourceCollection Resources { get; set; }
+
+        /// <summary>
+        /// Indicates whether the embedded resource state should be always converted as an array
+        /// even if there is only one state for that embedded resource.
+        /// </summary>
+        public bool EnforcingArrayConverting{ get; set; }
         #endregion
     }
 }
