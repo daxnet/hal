@@ -85,7 +85,7 @@ namespace Hal.Converters
 
             if (resource.State != null)
             {
-                obj = JToken.FromObject(resource.State);
+                obj = JToken.FromObject(resource.State, serializer);
                 if (obj != null && obj.Type != JTokenType.Object)
                 {
                     obj.WriteTo(writer);
