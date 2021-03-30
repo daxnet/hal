@@ -40,7 +40,6 @@ namespace Hal
     /// <summary>
     /// Represents a collection of <see cref="IResource"/> objects.
     /// </summary>
-    /// <seealso cref="System.Collections.Generic.ICollection{Hal.IResource}" />
     public sealed class ResourceCollection : ICollection<IResource>
     {
         #region Private Fields

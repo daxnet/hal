@@ -53,6 +53,6 @@ namespace Hal
         /// <value>
         /// The link items.
         /// </value>
-        LinkItemCollection Items { get; set; }
+        LinkItemCollection? Items { get; set; }
     }
 }

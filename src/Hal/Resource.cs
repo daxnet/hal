@@ -62,7 +62,7 @@ namespace Hal
         /// Initializes a new instance of the <see cref="Resource"/> class.
         /// </summary>
         /// <param name="state">The state of the resource.</param>
-        public Resource(object state)
+        public Resource(object? state)
         {
             this.State = state;
         }
@@ -74,7 +74,7 @@ namespace Hal
         /// <value>
         /// The embedded resources.
         /// </value>
-        public EmbeddedResourceCollection EmbeddedResources { get; set; }
+        public EmbeddedResourceCollection? EmbeddedResources { get; set; }
 
         /// <summary>
         /// Gets or sets the links.
@@ -82,7 +82,7 @@ namespace Hal
         /// <value>
         /// The links.
         /// </value>
-        public LinkCollection Links { get; set; }
+        public LinkCollection? Links { get; set; }
 
         /// <summary>
         /// Gets or sets the state of the resource, usually it is the object
@@ -91,7 +91,7 @@ namespace Hal
         /// <value>
         /// The state of the resource.
         /// </value>
-        public object State { get; set; }
+        public object? State { get; set; }
         #endregion
 
         #region Public Methods

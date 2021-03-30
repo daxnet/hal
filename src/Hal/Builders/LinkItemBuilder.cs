@@ -74,15 +74,15 @@ namespace Hal.Builders
         #region Private Fields
         private readonly string rel;
         private readonly string href;
-        private readonly string name;
+        private readonly string? name;
         private readonly bool? templated;
-        private readonly string type;
-        private readonly string deprecation;
-        private readonly string profile;
-        private readonly string title;
-        private readonly string hreflang;
+        private readonly string? type;
+        private readonly string? deprecation;
+        private readonly string? profile;
+        private readonly string? title;
+        private readonly string? hreflang;
         private readonly bool enforcingArrayConverting;
-        private readonly IDictionary<string, object> additionalProperties;
+        private readonly IDictionary<string, object>? additionalProperties;
         #endregion
 
         #region Ctor        
@@ -106,10 +106,10 @@ namespace Hal.Builders
         /// format, even if the number of items is only one.</param>
         /// <param name="additionalProperties">The additional properties.</param>
         public LinkItemBuilder(IBuilder context, string rel, string href,
-            string name = null, bool? templated = null, string type = null,
-            string deprecation = null, string profile = null, string title = null,
-            string hreflang = null, bool enforcingArrayConverting = false, 
-            IDictionary<string, object> additionalProperties = null) : base(context)
+            string? name = null, bool? templated = null, string? type = null,
+            string? deprecation = null, string? profile = null, string? title = null,
+            string? hreflang = null, bool enforcingArrayConverting = false, 
+            IDictionary<string, object>? additionalProperties = null) : base(context)
         {
             this.rel = rel;
             this.href = href;
@@ -159,7 +159,7 @@ namespace Hal.Builders
             if (link == null)
             {
                 link = new Link(this.rel);
-                resource.Links.Add(link);
+                resource.Links?.Add(link);
             }
 
             if (link.Items == null)

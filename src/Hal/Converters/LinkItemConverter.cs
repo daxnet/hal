@@ -66,10 +66,7 @@ namespace Hal.Converters
         /// <returns>
         /// The object value.
         /// </returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return null;
-        }
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => null;
 
         /// <summary>
         /// Writes the JSON representation of the object.
@@ -77,9 +74,9 @@ namespace Hal.Converters
         /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
         /// <param name="value">The value.</param>
         /// <param name="serializer">The calling serializer.</param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            LinkItem li = (LinkItem)value;
+            LinkItem li = (LinkItem)value!;
             writer.WriteStartObject();
             if (!string.IsNullOrEmpty(li.Name) || serializer.NullValueHandling == NullValueHandling.Include)
             {

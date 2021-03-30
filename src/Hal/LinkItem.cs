@@ -76,7 +76,7 @@ namespace Hal
         /// Its value MAY be used as a secondary key for selecting Link Objects
         /// which share the same relation type.
         /// </remarks>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value which indicates if the <c>Href</c> property
@@ -92,7 +92,7 @@ namespace Hal
         /// Gets or sets the media type expected when dereferencing the target source. This value
         /// is optional.
         /// </summary>
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         /// <summary>
         /// Gets or sets a URL which provides further information about the deprecation. This value is
@@ -108,25 +108,25 @@ namespace Hal
         /// value so that a client manitainer can easily find information about
         /// the deprecation.
         /// </remarks>
-        public string Deprecation { get; set; }
+        public string? Deprecation { get; set; }
 
         /// <summary>
         /// Gets or sets the URI that hints about the profile of the target resource. This
         /// value is optional.
         /// </summary>
-        public string Profile { get; set; }
+        public string? Profile { get; set; }
 
         /// <summary>
         /// Gets or sets a <see cref="string"/> value which is intended for labelling
         /// the link with a human-readable identifier. This value is optional.
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Gets or sets a <see cref="string"/> value which is intending for indicating
         /// the language of the target resource.
         /// </summary>
-        public string Hreflang { get; set; }
+        public string? Hreflang { get; set; }
 
         /// <summary>
         /// Gets a list of additional properties assigned to the current link item.

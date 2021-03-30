@@ -39,6 +39,9 @@ using System.Collections.Generic;
 
 namespace Hal
 {
+    /// <summary>
+    /// Represents a collection of links.
+    /// </summary>
     public sealed class LinkCollection : ICollection<ILink>
     {
         #region Private Fields

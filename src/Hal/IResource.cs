@@ -48,7 +48,7 @@ namespace Hal
         /// <value>
         /// The state of the resource.
         /// </value>
-        object State { get; set; }
+        object? State { get; set; }
 
         /// <summary>
         /// Gets or sets the links.
@@ -56,7 +56,7 @@ namespace Hal
         /// <value>
         /// The links.
         /// </value>
-        LinkCollection Links { get; set; }
+        LinkCollection? Links { get; set; }
 
         /// <summary>
         /// Gets the embedded resources.
@@ -64,6 +64,6 @@ namespace Hal
         /// <value>
         /// The embedded resources.
         /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        EmbeddedResourceCollection? EmbeddedResources { get; }
     }
 }

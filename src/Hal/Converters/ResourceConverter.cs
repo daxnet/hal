@@ -67,7 +67,7 @@ namespace Hal.Converters
         /// <returns>
         /// The object value.
         /// </returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             return null;
         }
@@ -78,10 +78,10 @@ namespace Hal.Converters
         /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
         /// <param name="value">The value.</param>
         /// <param name="serializer">The calling serializer.</param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var resource = (Resource)value;
-            JToken obj = null;
+            var resource = (Resource)value!;
+            JToken? obj = null;
 
             if (resource.State != null)
             {
@@ -120,26 +120,29 @@ namespace Hal.Converters
                 writer.WriteStartObject();
                 foreach(var embeddedResource in resource.EmbeddedResources)
                 {
-                    writer.WritePropertyName(embeddedResource.Name);
-                    if (embeddedResource.Resources != null && embeddedResource.Resources.Count > 0)
+                    if (!string.IsNullOrEmpty(embeddedResource.Name))
                     {
-                        if (!resource.EmbeddedResources.EnforcingArrayConverting &&
-                            !embeddedResource.EnforcingArrayConverting &&
-                            embeddedResource.Resources.Count == 1)
+                        writer.WritePropertyName(embeddedResource.Name!);
+                        if (embeddedResource.Resources != null && embeddedResource.Resources.Count > 0)
                         {
-                            //writer.WriteStartObject();
-                            var first = embeddedResource.Resources.First();
-                            WriteJson(writer, first, serializer);
-                            //writer.WriteEndObject();
-                        }
-                        else
-                        {
-                            writer.WriteStartArray();
-                            foreach(var current in embeddedResource.Resources)
+                            if (!resource.EmbeddedResources.EnforcingArrayConverting &&
+                                !embeddedResource.EnforcingArrayConverting &&
+                                embeddedResource.Resources.Count == 1)
                             {
-                                WriteJson(writer, current, serializer);
+                                //writer.WriteStartObject();
+                                var first = embeddedResource.Resources.First();
+                                WriteJson(writer, first, serializer);
+                                //writer.WriteEndObject();
                             }
-                            writer.WriteEndArray();
+                            else
+                            {
+                                writer.WriteStartArray();
+                                foreach (var current in embeddedResource.Resources)
+                                {
+                                    WriteJson(writer, current, serializer);
+                                }
+                                writer.WriteEndArray();
+                            }
                         }
                     }
                 }

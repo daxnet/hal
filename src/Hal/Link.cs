@@ -70,7 +70,7 @@ namespace Hal
         /// <value>
         /// The link items.
         /// </value>
-        public LinkItemCollection Items { get; set; }
+        public LinkItemCollection? Items { get; set; }
         #endregion
 
         #region Public Methods        

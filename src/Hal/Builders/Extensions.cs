@@ -121,10 +121,10 @@ namespace Hal.Builders
         /// <param name="additionalProperties">The additional properties.</param>
         /// <returns></returns>
         public static ILinkItemBuilder WithLinkItem(this ILinkBuilder linkBuilder, string href,
-            string name = null, bool? templated = null, string type = null,
-            string deprecation = null, string profile = null, string title = null,
-            string hreflang = null,
-            IDictionary<string, object> additionalProperties = null)
+            string? name = null, bool? templated = null, string? type = null,
+            string? deprecation = null, string? profile = null, string? title = null,
+            string? hreflang = null,
+            IDictionary<string, object>? additionalProperties = null)
         {
             return new LinkItemBuilder(linkBuilder, linkBuilder.Rel, href, name, templated,
                 type, deprecation, profile, title, hreflang, linkBuilder.EnforcingArrayConverting, additionalProperties);
@@ -167,7 +167,7 @@ namespace Hal.Builders
         /// <summary>
         /// Adds a link item to the currently building link.
         /// </summary>
-        /// <param name="linkBuilder">The link builder.</param>
+        /// <param name="builder">The link builder.</param>
         /// <param name="href">The href attribute of a link item.</param>
         /// <param name="name">The name attribute of a link item.</param>
         /// <param name="templated">The <see cref="bool"/> value which indicates if the <c>Href</c> property
@@ -182,10 +182,10 @@ namespace Hal.Builders
         /// <param name="additionalProperties">The additional properties.</param>
         /// <returns></returns>
         public static ILinkItemBuilder WithLinkItem(this ILinkItemBuilder builder, string href,
-            string name = null, bool? templated = null, string type = null,
-            string deprecation = null, string profile = null, string title = null,
-            string hreflang = null,
-            IDictionary<string, object> additionalProperties = null)
+            string? name = null, bool? templated = null, string? type = null,
+            string? deprecation = null, string? profile = null, string? title = null,
+            string? hreflang = null,
+            IDictionary<string, object>? additionalProperties = null)
         {
             return new LinkItemBuilder(builder, builder.Rel, href, name, templated,
                 type, deprecation, profile, title, hreflang, builder.EnforcingArrayConverting, additionalProperties);

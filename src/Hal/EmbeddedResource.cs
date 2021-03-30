@@ -58,7 +58,7 @@ namespace Hal
         /// <value>
         /// The name of the embedded resource.
         /// </value>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of resources that is represented by current embedded resource

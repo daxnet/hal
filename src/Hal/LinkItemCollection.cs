@@ -42,7 +42,6 @@ namespace Hal
     /// <summary>
     /// Represents a collection of <see cref="ILinkItem"/> objects.
     /// </summary>
-    /// <seealso cref="System.Collections.Generic.ICollection{Hal.ILinkItem}" />
     public sealed class LinkItemCollection : ICollection<ILinkItem>
     {
         #region Private Fields

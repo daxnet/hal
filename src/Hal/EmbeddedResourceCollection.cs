@@ -40,7 +40,6 @@ namespace Hal
     /// <summary>
     /// Represents the list of <see cref="IEmbeddedResource"/> objects.
     /// </summary>
-    /// <seealso cref="System.Collections.Generic.ICollection{Hal.IEmbeddedResource}" />
     public sealed class EmbeddedResourceCollection : ICollection<IEmbeddedResource>
     {
         #region Private Fields

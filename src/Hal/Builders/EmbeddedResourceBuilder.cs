@@ -106,7 +106,7 @@ namespace Hal.Builders
                 resource.EmbeddedResources = new EmbeddedResourceCollection(this.enforcingArrayConverting);
             }
 
-            var embeddedResource = resource.EmbeddedResources.FirstOrDefault(x => x.Name.Equals(this.name));
+            var embeddedResource = resource.EmbeddedResources.FirstOrDefault(x => !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
             if (embeddedResource == null)
             {
                 embeddedResource = new EmbeddedResource

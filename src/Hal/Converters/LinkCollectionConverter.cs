@@ -65,10 +65,7 @@ namespace Hal.Converters
         /// <returns>
         /// The object value.
         /// </returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return null;
-        }
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => null;
 
         /// <summary>
         /// Writes the JSON representation of the object.
@@ -76,17 +73,18 @@ namespace Hal.Converters
         /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
         /// <param name="value">The value.</param>
         /// <param name="serializer">The calling serializer.</param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var linkCollection = (LinkCollection)value;
+            var linkCollection = (LinkCollection)value!;
             writer.WritePropertyName("_links");
             writer.WriteStartObject();
-            foreach(var link in linkCollection)
+            foreach (var link in linkCollection)
             {
                 serializer.Serialize(writer, link);
             }
             writer.WriteEndObject();
         }
+
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON.
