@@ -169,17 +169,23 @@ namespace Hal
         /// <returns>
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public override string ToString()
+        public override string ToString() => ToString(new JsonSerializerSettings
         {
-            var serializerSettings = new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore,
-                Converters = new[] { new LinkItemConverter() }
-            };
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Ignore
+        });
 
-            return JsonConvert.SerializeObject(this, serializerSettings);
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="jsonSerializerSettings">The serialization settings.</param>
+        /// <returns>The string representation of the current instance.</returns>
+        public string ToString(JsonSerializerSettings jsonSerializerSettings)
+        {
+            jsonSerializerSettings.Converters = new[] { new LinkItemConverter() };
+            return JsonConvert.SerializeObject(this, jsonSerializerSettings);
         }
+
         #endregion
 
     }
