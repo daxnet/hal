@@ -1,6 +1,8 @@
 # HAL
 The C#/.NET Core implementation of Hypertext Application Language (HAL) specification. This project provides the full support of JSON Hypertext Application Language which is described [here](https://tools.ietf.org/html/draft-kelly-json-hal-08).
 
+[![Build status](https://dev.azure.com/sunnycoding/HAL/_apis/build/status/HAL-CI)](https://dev.azure.com/sunnycoding/HAL/_build/latest?definitionId=11)
+
 ## What is HAL?
 According to the [official site of HAL](http://stateless.co/hal_specification.html), HAL is a simple format that gives a consistent and easy way to hyperlink between resources in a RESTful API.
 
@@ -14,10 +16,7 @@ Following class diagram shows the HAL model that has been implemented by this pr
 ## How to Use
 ### Adding the Package
 
-1. In Visual Studio 2015/2017, add `https://www.myget.org/F/daxnet-utils/api/v3/index.json` as one of your package source
-2. Execute following command in Package Manager Console from within Visual Studio to add the HAL package to your selected project
-
-	`Install-Package Hal`
+- Refer to [https://www.nuget.org/packages/Hal](https://www.nuget.org/packages/Hal) for the instructions of installing the NuGet package.
 
 
 ### Example
