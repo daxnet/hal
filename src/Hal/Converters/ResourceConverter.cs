@@ -144,6 +144,11 @@ namespace Hal.Converters
                                 writer.WriteEndArray();
                             }
                         }
+                        else
+                        {
+                            writer.WriteStartArray();
+                            writer.WriteEndArray();
+                        }
                     }
                 }
                 writer.WriteEndObject();
