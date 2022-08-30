@@ -14,8 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hal", "src\Hal\Hal.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hal.Tests", "tests\Hal.Tests\Hal.Tests.csproj", "{FE4B2D55-41DE-4AFA-97F6-B0FDB5A4EB20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebAPI", "tests\SampleWebAPI\SampleWebAPI.csproj", "{02B02291-B603-4E3B-AD3C-4536A0DEA8CD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,10 +28,6 @@ Global
 		{FE4B2D55-41DE-4AFA-97F6-B0FDB5A4EB20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE4B2D55-41DE-4AFA-97F6-B0FDB5A4EB20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE4B2D55-41DE-4AFA-97F6-B0FDB5A4EB20}.Release|Any CPU.Build.0 = Release|Any CPU
-		{02B02291-B603-4E3B-AD3C-4536A0DEA8CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{02B02291-B603-4E3B-AD3C-4536A0DEA8CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{02B02291-B603-4E3B-AD3C-4536A0DEA8CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{02B02291-B603-4E3B-AD3C-4536A0DEA8CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
