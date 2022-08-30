@@ -123,26 +123,25 @@ namespace Hal.Converters
                     if (!string.IsNullOrEmpty(embeddedResource.Name))
                     {
                         writer.WritePropertyName(embeddedResource.Name!);
-                        if (embeddedResource.Resources != null && embeddedResource.Resources.Count > 0)
+
+                        embeddedResource.Resources ??= new ResourceCollection();
+                        if (!resource.EmbeddedResources.EnforcingArrayConverting &&
+                            !embeddedResource.EnforcingArrayConverting &&
+                            embeddedResource.Resources.Count == 1)
                         {
-                            if (!resource.EmbeddedResources.EnforcingArrayConverting &&
-                                !embeddedResource.EnforcingArrayConverting &&
-                                embeddedResource.Resources.Count == 1)
+                            //writer.WriteStartObject();
+                            var first = embeddedResource.Resources.First();
+                            WriteJson(writer, first, serializer);
+                            //writer.WriteEndObject();
+                        }
+                        else
+                        {
+                            writer.WriteStartArray();
+                            foreach (var current in embeddedResource.Resources)
                             {
-                                //writer.WriteStartObject();
-                                var first = embeddedResource.Resources.First();
-                                WriteJson(writer, first, serializer);
-                                //writer.WriteEndObject();
+                                WriteJson(writer, current, serializer);
                             }
-                            else
-                            {
-                                writer.WriteStartArray();
-                                foreach (var current in embeddedResource.Resources)
-                                {
-                                    WriteJson(writer, current, serializer);
-                                }
-                                writer.WriteEndArray();
-                            }
+                            writer.WriteEndArray();
                         }
                     }
                 }
