@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>C#/.NET Core implementation of Hypertext Application Language (HAL).</Description>
-    <Copyright>Copyright (C) 2017-2021 by Sunny Chen.</Copyright>
+    <Copyright>Copyright (C) 2017-2022 by Sunny Chen.</Copyright>
     <Authors>Sunny Chen</Authors>
     <TargetFrameworks>net461;netstandard2.1</TargetFrameworks>
     <AssemblyName>Hal</AssemblyName>
