@@ -37,6 +37,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
@@ -68,6 +69,7 @@ namespace Hal.AspNetCore
         };
 
         private readonly SupportsHalOptions _options;
+        private readonly ILogger<SupportsHalAttribute> _logger;
 
         #endregion Private Fields
 
@@ -77,7 +79,8 @@ namespace Hal.AspNetCore
         /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
         /// </summary>
         /// <param name="options">The options that is used for configuring the HAL support.</param>
-        public SupportsHalAttribute(IOptions<SupportsHalOptions> options) => (Order, _options) = (2, options.Value);
+        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger) => 
+            (Order, _options, _logger) = (2, options.Value, logger);
 
         #endregion Public Constructors
 
@@ -92,7 +95,7 @@ namespace Hal.AspNetCore
                 if (IsPagedResult(context.Result, out var pagedResult, out _))
                 {
                     var dataCollectionName = MakeCamelCase(controllerActionDescriptor?.ControllerName ?? "data");
-                    ExpandoObject resultObj = new ExpandoObject();
+                    ExpandoObject resultObj = new();
                     resultObj.TryAdd("page", pagedResult!.PageNumber);
                     resultObj.TryAdd("size", pagedResult!.PageSize);
                     resultObj.TryAdd("totalPages", pagedResult!.TotalPages);
@@ -144,6 +147,11 @@ namespace Hal.AspNetCore
                         var controllerTypeInfo = controllerActionDescriptor!.ControllerTypeInfo;
                         var controllerRouteAttributeType = controllerTypeInfo.CustomAttributes?.FirstOrDefault(x => x.AttributeType == typeof(RouteAttribute));
                         var controllerRouteName = controllerRouteAttributeType?.ConstructorArguments[0].Value?.ToString() ?? controllerActionDescriptor?.ControllerName;
+                        if (!string.IsNullOrEmpty(controllerRouteName) && controllerRouteName.Contains("[controller]"))
+                        {
+                            controllerRouteName = controllerRouteName.Replace("[controller]", controllerActionDescriptor?.ControllerName);
+                        }
+
                         var newState = new List<JObject>();
                         var entityObjectSerializer = JsonSerializer.Create(_jsonSerializerSettings);
                         foreach (var obj in state)

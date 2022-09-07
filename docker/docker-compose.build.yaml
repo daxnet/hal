@@ -1,0 +1,11 @@
+services:
+  hal-example:
+    image: daxnet/hal-example
+    build:
+      context: ..
+      dockerfile: example/Hal.Example/Dockerfile
+  hal-nginx:
+    image: daxnet/hal-nginx
+    build:
+      context: ..
+      dockerfile: example/Hal.Nginx/Dockerfile

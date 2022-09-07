@@ -6,7 +6,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
+COPY ["LICENSE", "LICENSE"]
 COPY ["example/Hal.Example/Hal.Example.csproj", "example/Hal.Example/"]
+COPY ["src/Hal.AspNetCore/Hal.AspNetCore.csproj", "src/Hal.AspNetCore/"]
+COPY ["src/Hal/Hal.csproj", "src/Hal/"]
 RUN dotnet restore "example/Hal.Example/Hal.Example.csproj"
 COPY . .
 WORKDIR "/src/example/Hal.Example"
