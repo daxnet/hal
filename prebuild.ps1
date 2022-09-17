@@ -14,8 +14,11 @@ if (($sourceBranch -ne "refs/heads/main") -and ($sourceBranch -ne "refs/heads/de
 		$stage = $splitted[$splitted.Length - 2]
 		if ($stage -eq "release") {
 			$suffix=""
-		} else {
-			$suffix=$stage
+		} elseif ($stage -eq "feature") {
+			$suffix="-"+$splitted[$splitted.Length - 1]
+		}
+		else {
+			$suffix="-"+$stage
 		}
 	}
 }
