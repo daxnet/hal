@@ -12,7 +12,7 @@
 		<AssemblyOriginatorKeyFile>../../tools/hal.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly>true</SignAssembly>
 		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-		<PackageId>Hal.AspNetCore</PackageId>
+		<PackageId>Hal.AspNetCoreIntegration</PackageId>
 		<PackageTags>hal;hypertext-application-language</PackageTags>
 		<PackageLicenseUrl></PackageLicenseUrl>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
