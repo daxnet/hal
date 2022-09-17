@@ -163,6 +163,17 @@ To add HAL support to your ASP.NET Core application, firstly add the `Hal.AspNet
 dotnet add package Hal.AspNetCoreIntegration
 ```
 
+And decorate your controller with the `SupportsHalAttribute` attribute:
+```cs
+[ServiceFilter(typeof(SupportsHalAttribute))]
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
+{
+    // ...
+}
+```
+
 Then modify the `Program.cs` to add HAL support:
 ```cs
 builder.Services.AddHalSupport();
