@@ -158,9 +158,9 @@ var hal = resource.ToString();
 ## ASP.NET Core Integration
 HAL supports ASP.NET Core integration, which allows the `application/hal+json` content type to be returned by your API server.
 
-To add HAL support to your ASP.NET Core application, firstly add the `Hal.AspNetCore` NuGet package:
+To add HAL support to your ASP.NET Core application, firstly add the `Hal.AspNetCoreIntegration` NuGet package:
 ```
-dotnet add package Hal.AspNetCore
+dotnet add package Hal.AspNetCoreIntegration
 ```
 
 Then modify the `Program.cs` to add HAL support:
