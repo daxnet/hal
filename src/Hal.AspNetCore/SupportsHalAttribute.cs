@@ -187,10 +187,6 @@ namespace Hal.AspNetCore
                 else if (context.Result is ObjectResult objectResult && objectResult.Value != null)
                 {
                     originalStatusCode = objectResult.StatusCode ?? (int)HttpStatusCode.OK;
-                    if (TryGetIdPropertyValue(objectResult.Value, out var idValue))
-                    {
-                        selfLinkItem = $"{selfLinkItem}/{idValue}";
-                    }
                     var linkItemBuilder = new ResourceBuilder()
                         .WithState(objectResult.Value)
                         .AddSelfLink().WithLinkItem(selfLinkItem);

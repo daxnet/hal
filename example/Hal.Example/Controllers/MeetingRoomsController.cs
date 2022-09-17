@@ -18,5 +18,15 @@ namespace Hal.Example.Controllers
                 size,
                 MeetingRoom.FakeRooms.Count(),
                 (int)Math.Ceiling((double)MeetingRoom.FakeRooms.Count() / size)));
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get(int id)
+            => MeetingRoom.FakeRooms.Any(mr => mr.ID == id)
+            ?
+            Ok(MeetingRoom.FakeRooms.First(mr => mr.ID == id))
+            :
+            NotFound($"Meeting Room Id {id} doesn't exist.");
     }
 }

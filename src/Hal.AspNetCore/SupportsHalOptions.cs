@@ -45,7 +45,7 @@ namespace Hal.AspNetCore
         /// Gets or sets a <see cref="bool"/> value which indicates whether
         /// the HAL feature should be enabled.
         /// </summary>
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the name of the Id property of the object that represents
