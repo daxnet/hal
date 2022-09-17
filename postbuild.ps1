@@ -15,7 +15,7 @@ if (-not (Test-Path -LiteralPath $nupkgOutputDirectory)) {
 	}
 }
 
-$files = Get-ChildItem src/Hal -Include *.nupkg -Recurse
+$files = Get-ChildItem src -Include *.nupkg -Recurse
 foreach ($file in $files)
 {
 	$fileName = $file.Name

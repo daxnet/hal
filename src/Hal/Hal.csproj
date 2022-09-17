@@ -4,7 +4,7 @@
     <Description>C#/.NET Core implementation of Hypertext Application Language (HAL).</Description>
     <Copyright>Copyright (C) 2017-2022 by Sunny Chen.</Copyright>
     <Authors>Sunny Chen</Authors>
-    <TargetFrameworks>net461;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
     <AssemblyName>Hal</AssemblyName>
     <AssemblyOriginatorKeyFile>../../tools/hal.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -21,7 +21,7 @@
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>0.999.0.0</AssemblyVersion>

@@ -1,0 +1,13 @@
+services:
+  hal-example:
+    image: daxnet/hal-example
+    environment:
+      - Logging__LogLevel__Default=Debug
+  hal-nginx:
+    image: daxnet/hal-nginx
+    ports:
+      - "8088:80"
+    depends_on:
+      - hal-example
+    links:
+      - hal-example

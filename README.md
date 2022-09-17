@@ -154,3 +154,94 @@ var resource = new Resource(new { currentlyProcessing = 14, shippedToday = 20 })
 
 var hal = resource.ToString();
 ```
+
+## ASP.NET Core Integration
+HAL supports ASP.NET Core integration, which allows the `application/hal+json` content type to be returned by your API server.
+
+To add HAL support to your ASP.NET Core application, firstly add the `Hal.AspNetCore` NuGet package:
+```
+dotnet add package Hal.AspNetCore
+```
+
+Then modify the `Program.cs` to add HAL support:
+```cs
+builder.Services.AddHalSupport();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.All;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+```
+The `AddHalSupport` method has three overloads:
+- **Parameterless one:** It enables the HAL by default and assumes that the name of the identifier property on your entity object is `Id`.
+- **With `Action<SupportsHalOptions>` parameter:** It enables you to configure the HAL framework when it is integrated with your ASP.NET Core application. For example, suppose the name of the identifier property on your entity object is not `Id` but `ID`:
+  ```cs
+  public class MeetingRoom
+  {
+    public int ID { get; set; } // <-- This is the identifier property
+    public string Name { get; set; } = string.Empty;
+    public int Seats { get; set; }
+  }
+  ```
+  You will need to set the name of the id property to `ID` in the options object, e.g.:
+  ```cs
+  builder.Services.AddHalSupport(options =>
+  {
+    options.IdPropertyName = "ID";
+  });
+  ```
+- **With `IConfigurationSection` parameter:** It also enables you to configure the HAL framework but this time it reads configuration from environment variables or `appsettings.json` file:
+  ```json
+  "hal": {
+    "enabled": true,
+    "idPropertyName": "ID"
+  }
+  ```
+  Then you should use:
+  ```cs
+  builder.Services.AddHalSupport(builder.Configuration.GetSection("hal"));
+  ```
+
+### Integrate with nginx Reverse Proxy
+The application that is expected to be deployed behind an nginx reverse proxy should have the `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` and `X-Forwarded-Port` forwarded when the HAL is enabled. Following is an example of the `nginx.conf` file:
+```nginx
+events {
+    worker_connections 512;
+}
+
+http {
+    server {
+        listen        80;
+        server_name   localhost;
+
+        location / {
+            proxy_pass           http://hal-example:80;
+            proxy_http_version   1.1;
+            proxy_set_header     Upgrade           $http_upgrade;
+            proxy_set_header     Connection        keep-alive;
+            proxy_set_header     Host              $host;
+            proxy_cache_bypass   $http_upgrade;
+            proxy_set_header     X-Real-IP         $remote_addr;
+            proxy_set_header     X-Forwarded-For   $proxy_add_x_forwarded_for;
+            proxy_set_header     X-Forwarded-Proto $scheme;
+            proxy_set_header     X-Forwarded-Host  $http_host;
+            proxy_set_header     X-Forwarded-Port  $server_port;
+        }
+    }
+}
+```
+
+### Running the Out-of-the-Box Example
+To debug the out-of-the-box example, in Visual Studio 2022, open `hal.sln` solution and set the `Hal.Example` project as the default startup project, then hit `F5` to debug.
+
+To learn how to build with docker and run the docker container behind the nginx proxy, use the following commands to build and run:
+```bash
+$ cd docker
+$ docker-compose -f docker-compose.build.yaml build
+$ docker-compose up
+```
+Once all containers are up and running, navigate to the following swagger page of the application to test:
+```
+http://localhost:8088/swagger/index.html
+```

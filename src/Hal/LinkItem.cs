@@ -7,7 +7,7 @@
 // |_|  |_/_/    \_\______|
 //
 // A C#/.NET Core implementation of Hypertext Application Language
-// http://stateless.co/hal_specification.html
+// https://stateless.group/hal_specification.html
 // 
 // MIT License
 //
