@@ -68,8 +68,8 @@ namespace Hal.AspNetCore
             }
         };
 
-        private readonly SupportsHalOptions _options;
         private readonly ILogger<SupportsHalAttribute> _logger;
+        private readonly SupportsHalOptions _options;
 
         #endregion Private Fields
 
@@ -163,7 +163,7 @@ namespace Hal.AspNetCore
                                 {
                                     self = new
                                     {
-                                        href = $"{context.HttpContext.Request.Scheme}://{context.HttpContext.Request.Host.ToUriComponent()}/{controllerRouteName}/{idValue}"
+                                        href = $"{GenerateLink(context.HttpContext.Request)}/{idValue}"
                                     }
                                 }));
                                 var modifiedObj = jobj.ToObject<JObject>();
@@ -213,37 +213,6 @@ namespace Hal.AspNetCore
 
         #region Private Methods
 
-        private static string GenerateLink(HttpRequest request, IEnumerable<KeyValuePair<string, StringValues>> querySubstitution)
-        {
-            var scheme = request.Scheme;
-            var host = request.Host;
-            var pathBase = request.PathBase;
-            var path = request.Path;
-            var substQuery = new Dictionary<string, StringValues>();
-
-            if (request.Query?.Count > 0)
-            {
-                request.Query.ToList().ForEach(q => substQuery.Add(q.Key, q.Value));
-                foreach (var subst in querySubstitution)
-                {
-                    if (substQuery.ContainsKey(subst.Key))
-                    {
-                        substQuery[subst.Key] = subst.Value;
-                    }
-                    else
-                    {
-                        substQuery.Add(subst.Key, subst.Value);
-                    }
-                }
-            }
-            else
-            {
-                querySubstitution.ToList().ForEach(kvp => substQuery.Add(kvp.Key, kvp.Value));
-            }
-
-            return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery), default);
-        }
-
         private static bool IsPagedResult(IActionResult result, out IPagedResult? pagedResult, out Type? entityType)
         {
             var isPagedResult = result is OkObjectResult okObj &&
@@ -265,6 +234,44 @@ namespace Hal.AspNetCore
         }
 
         private static string MakeCamelCase(string src) => $"{src[0].ToString().ToLower()}{src[1..]}";
+
+        private string GenerateLink(HttpRequest request, IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null)
+        {
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug(request.Dump());
+            }
+            var scheme = request.Scheme;
+            var host = request.Host;
+            var pathBase = request.PathBase;
+            var path = request.Path;
+            var substQuery = new Dictionary<string, StringValues>();
+
+            if (querySubstitution != null)
+            {
+                if (request.Query?.Count > 0)
+                {
+                    request.Query.ToList().ForEach(q => substQuery.Add(q.Key, q.Value));
+                    foreach (var subst in querySubstitution)
+                    {
+                        if (substQuery.ContainsKey(subst.Key))
+                        {
+                            substQuery[subst.Key] = subst.Value;
+                        }
+                        else
+                        {
+                            substQuery.Add(subst.Key, subst.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    querySubstitution.ToList().ForEach(kvp => substQuery.Add(kvp.Key, kvp.Value));
+                }
+            }
+
+            return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery));
+        }
 
         private bool HasIdProperty(Type? entityType) => entityType != null &&
             (from property in entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
