@@ -7,7 +7,10 @@ builder.Services.AddHalSupport(options =>
 {
     options.IdPropertyName = "ID";
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.SuppressAsyncSuffixInActionNames = false;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

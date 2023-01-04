@@ -20,11 +20,11 @@
 
         #region Public Properties
 
-        public int ID { get; set; }
+        public int ID { get; init; }
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
 
-        public int Seats { get; set; }
+        public int Seats { get; init; }
 
         #endregion Public Properties
     }

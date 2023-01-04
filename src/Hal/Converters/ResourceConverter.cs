@@ -102,11 +102,6 @@ namespace Hal.Converters
 
             if (obj != null)
             {
-                //if (obj.Type != JTokenType.Object)
-                //{
-                //    obj.WriteTo(writer);
-                //}
-
                 var @object = (JObject)obj;
                 foreach (var prop in @object.Properties())
                 {

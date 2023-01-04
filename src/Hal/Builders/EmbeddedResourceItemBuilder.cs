@@ -99,7 +99,7 @@ namespace Hal.Builders
         /// </returns>
         protected override Resource DoBuild(Resource resource)
         {
-            var embeddedResource = resource.EmbeddedResources.First(x => !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
+            var embeddedResource = resource.EmbeddedResources?.FirstOrDefault(x => !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
             if (embeddedResource == null)
             {
                 embeddedResource = new EmbeddedResource
