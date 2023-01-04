@@ -213,6 +213,55 @@ The `AddHalSupport` method has three overloads:
   ```cs
   builder.Services.AddHalSupport(builder.Configuration.GetSection("hal"));
   ```
+### About the `self` Link of Each Object in an Enumeration Result
+It is likely that an ASP.NET Core Web API controller would return a list of objects by some actions, for example:
+```cs
+[HttpGet("get-by-name/{name}")]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+public IActionResult GetByName(string name)
+    => MeetingRoom.FakeRooms.Any(mr => mr.Name == name)
+    ?
+    Ok(MeetingRoom.FakeRooms.Where(mr => mr.Name == name))
+    :
+    NotFound($"Meeting Room {name} not found.");
+```
+In the above example, the `GetByName` method will return all meeting rooms whose name equals to a given name. As a result, this API will return a list of objects. If HAL is enabled on this API, the response payload would look like this:
+```json
+{
+  "_links": {
+    "self": {
+      "href": "http://localhost:5139/api/MeetingRooms/get-by-name/Mars"
+    }
+  },
+  "count": 1,
+  "_embedded": {
+    "meetingRooms": [
+      {
+        "id": 4,
+        "name": "Mars",
+        "seats": 14,
+        "_links": {
+          "self": {
+            "href": "http://localhost:5139/api/MeetingRooms/4"
+          }
+        }
+      }
+    ]
+  }
+}
+```
+Note that for each of the object in the `meetingRooms` array, it has the `self` link that points to the location of the current resource. By default, this location URL is calculated based on the following mechanism:
+1. Find the API controller instance of the current API call
+2. Find the only one method that matches the following criterias:
+    1. The return type is either `IActionResult` or `Task<IActionResult>`
+    2. There is only one parameter, and the type of the parameter is the same as the type of the ID property of the object
+3. If there is only one method that has been found, use this method as the controller action to calculate the `self` link of the current object
+4. If no method found, simply use the `self` link of the current API response payload as the `self` link of each of the object (e.g. `http://localhost:5139/api/MeetingRooms/get-by-name/Mars` in the above case)
+5. If multiple methods found, then try to locate the only one method that has been decorated with the `GetByIdMethodImplAttribute` attribute, and use this method as the controller action to calculate the `self` link of the current object
+6. If no or still multiple methods found, simply use the `self` link of the current API response payload as the `self` link of each of the object (e.g. `http://localhost:5139/api/MeetingRooms/get-by-name/Mars` in the above case)
+
+You can try running the example in this code repo to understand how the above mechanism works.
 
 ### Integrate with nginx Reverse Proxy
 The application that is expected to be deployed behind an nginx reverse proxy should have the `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` and `X-Forwarded-Port` forwarded when the HAL is enabled. Following is an example of the `nginx.conf` file:

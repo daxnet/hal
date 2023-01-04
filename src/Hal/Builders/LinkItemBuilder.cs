@@ -155,7 +155,7 @@ namespace Hal.Builders
         /// </returns>
         protected override Resource DoBuild(Resource resource)
         {
-            var link = resource.Links.FirstOrDefault(x => x.Rel.Equals(this.rel));
+            var link = resource.Links?.FirstOrDefault(x => x.Rel.Equals(this.rel));
             if (link == null)
             {
                 link = new Link(this.rel);

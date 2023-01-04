@@ -7,7 +7,7 @@
 // |_|  |_/_/    \_\______|
 //
 // A C#/.NET Core implementation of Hypertext Application Language
-// https://stateless.group/hal_specification.html
+// http://stateless.co/hal_specification.html
 //
 // MIT License
 //
@@ -43,6 +43,7 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using System.Collections;
 using System.Dynamic;
 using System.Net;
 using System.Reflection;
@@ -55,7 +56,6 @@ namespace Hal.AspNetCore
     /// </summary>
     public class SupportsHalAttribute : ResultFilterAttribute
     {
-
         #region Private Fields
 
         private static readonly JsonSerializerSettings _jsonSerializerSettings = new()
@@ -79,7 +79,7 @@ namespace Hal.AspNetCore
         /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
         /// </summary>
         /// <param name="options">The options that is used for configuring the HAL support.</param>
-        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger) => 
+        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger) =>
             (Order, _options, _logger) = (2, options.Value, logger);
 
         #endregion Public Constructors
@@ -123,20 +123,20 @@ namespace Hal.AspNetCore
                         .WithState(new { page = new { number, size, totalElements, totalPages } })
                         .AddSelfLink().WithLinkItem(selfLinkItem);
 
-                    var firstLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", 1.ToString() } });
+                    var firstLinkItem = GenerateLink(context, new Dictionary<string, StringValues> { { "page", 1.ToString() } });
                     linkItemBuilder = linkItemBuilder.AddLink("first").WithLinkItem(firstLinkItem);
 
-                    var lastLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", totalPages.ToString() } });
+                    var lastLinkItem = GenerateLink(context, new Dictionary<string, StringValues> { { "page", totalPages.ToString() } });
                     linkItemBuilder = linkItemBuilder.AddLink("last").WithLinkItem(lastLinkItem);
                     if (number > 1 && number <= totalPages)
                     {
-                        string? prevLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (number - 1).ToString() } });
+                        string? prevLinkItem = GenerateLink(context, new Dictionary<string, StringValues> { { "page", (number - 1).ToString() } });
                         linkItemBuilder = linkItemBuilder.AddLink("prev").WithLinkItem(prevLinkItem);
                     }
 
                     if (number >= 1 && number < totalPages)
                     {
-                        string? nextLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (number + 1).ToString() } });
+                        string? nextLinkItem = GenerateLink(context, new Dictionary<string, StringValues> { { "page", (number + 1).ToString() } });
                         linkItemBuilder = linkItemBuilder.AddLink("next").WithLinkItem(nextLinkItem);
                     }
 
@@ -152,27 +152,7 @@ namespace Hal.AspNetCore
                             controllerRouteName = controllerRouteName.Replace("[controller]", controllerActionDescriptor?.ControllerName);
                         }
 
-                        var newState = new List<JObject>();
-                        var entityObjectSerializer = JsonSerializer.Create(_jsonSerializerSettings);
-                        foreach (var obj in state)
-                        {
-                            if (obj != null && TryGetIdPropertyValue(obj, out var idValue))
-                            {
-                                JObject jobj = JObject.FromObject(obj, entityObjectSerializer);
-                                jobj.Add("_links", JToken.FromObject(new
-                                {
-                                    self = new
-                                    {
-                                        href = $"{GenerateLink(context.HttpContext.Request)}/{idValue}"
-                                    }
-                                }));
-                                var modifiedObj = jobj.ToObject<JObject>();
-                                if (modifiedObj != null)
-                                {
-                                    newState.Add(modifiedObj);
-                                }
-                            }
-                        }
+                        var newState = ConvertListToHalResourceObjects(context, state);
 
                         resourceBuilder = linkItemBuilder.AddEmbedded(embeddedResourceName)
                             .Resource(new ResourceBuilder().WithState(newState));
@@ -187,10 +167,24 @@ namespace Hal.AspNetCore
                 else if (context.Result is ObjectResult objectResult && objectResult.Value != null)
                 {
                     originalStatusCode = objectResult.StatusCode ?? (int)HttpStatusCode.OK;
-                    var linkItemBuilder = new ResourceBuilder()
-                        .WithState(objectResult.Value)
-                        .AddSelfLink().WithLinkItem(selfLinkItem);
-                    resource = linkItemBuilder.Build();
+                    IBuilder? resourceBuilder;
+                    if (objectResult.Value is IEnumerable enumerableResult)
+                    {
+                        var newState = ConvertListToHalResourceObjects(context, enumerableResult);
+                        resourceBuilder = new ResourceBuilder()
+                            .WithState(new { count = enumerableResult.Cast<object>().Count() })
+                            .AddSelfLink().WithLinkItem(selfLinkItem)
+                            .AddEmbedded(MakeCamelCase(controllerActionDescriptor?.ControllerName ?? "data"))
+                            .Resource(new ResourceBuilder().WithState(newState));
+                    }
+                    else
+                    {
+                        resourceBuilder = new ResourceBuilder()
+                            .WithState(objectResult.Value)
+                            .AddSelfLink().WithLinkItem(selfLinkItem);
+                    }
+
+                    resource = resourceBuilder.Build();
                 }
                 else
                 {
@@ -235,8 +229,40 @@ namespace Hal.AspNetCore
 
         private static string MakeCamelCase(string src) => $"{src[0].ToString().ToLower()}{src[1..]}";
 
-        private string GenerateLink(HttpRequest request, IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null)
+        private IEnumerable<JObject> ConvertListToHalResourceObjects(ResultExecutingContext context, IEnumerable state)
         {
+            var newState = new List<JObject>();
+            var entityObjectSerializer = JsonSerializer.Create(_jsonSerializerSettings);
+            foreach (var obj in state)
+            {
+                if (obj != null && TryGetIdPropertyValue(obj, out var idValue, out var idPropertyType))
+                {
+                    JObject jobj = JObject.FromObject(obj, entityObjectSerializer);
+                    jobj.Add("_links", JToken.FromObject(new
+                    {
+                        self = new
+                        {
+                            href = $"{GenerateLink(context, useIdRoute: true, idValue: idValue, idPropertyType: idPropertyType)}"
+                        }
+                    }));
+                    var modifiedObj = jobj.ToObject<JObject>();
+                    if (modifiedObj != null)
+                    {
+                        newState.Add(modifiedObj);
+                    }
+                }
+            }
+
+            return newState;
+        }
+
+        private string GenerateLink(ResultExecutingContext context,
+            IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null,
+            bool useIdRoute = false,
+            object? idValue = null,
+            Type? idPropertyType = null)
+        {
+            var request = context.HttpContext.Request;
             if (_logger.IsEnabled(LogLevel.Debug))
             {
                 _logger.LogDebug(request.Dump());
@@ -245,6 +271,53 @@ namespace Hal.AspNetCore
             var host = request.Host;
             var pathBase = request.PathBase;
             var path = request.Path;
+            if (useIdRoute && idValue != null && idPropertyType != null)
+            {
+                if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+                {
+                    var methods = from m in controllerActionDescriptor.ControllerTypeInfo.DeclaredMethods
+                                  let parameters = m.GetParameters()
+                                  where m.IsPublic &&
+                                  (typeof(IActionResult).IsAssignableFrom(m.ReturnType) || typeof(Task<IActionResult>).IsAssignableFrom(m.ReturnType)) &&
+                                  parameters.Length == 1 &&
+                                  parameters[0].ParameterType == idPropertyType
+                                  select new
+                                  {
+                                      Method = m,
+                                      Parameter = parameters[0]
+                                  };
+                    if (methods.Any())
+                    {
+                        MethodInfo? getByIdMethod = null;
+                        ParameterInfo? getByIdMethodParameter = null;
+                        if (methods.Count() > 1)
+                        {
+                            var methodSig = methods.FirstOrDefault(m => m.Method.IsDefined(typeof(GetByIdMethodImplAttribute), false));
+                            if (methodSig != null)
+                            {
+                                getByIdMethod = methodSig.Method;
+                                getByIdMethodParameter = methodSig.Parameter;
+                            }
+                        }
+                        else
+                        {
+                            getByIdMethod = methods.First().Method;
+                            getByIdMethodParameter = methods.First().Parameter;
+                        }
+
+                        if (getByIdMethod != null && getByIdMethodParameter != null && context.Controller is ControllerBase ctlr)
+                        {
+                            var dict = new Dictionary<string, object>
+                            {
+                                { getByIdMethodParameter.Name!, idValue }
+                            };
+
+                            path = ctlr.Url.Action(getByIdMethod.Name, controllerActionDescriptor.ControllerName, dict);
+                        }
+                    }
+                }
+            }
+
             var substQuery = new Dictionary<string, StringValues>();
 
             if (querySubstitution != null)
@@ -275,15 +348,16 @@ namespace Hal.AspNetCore
 
         private bool HasIdProperty(Type? entityType) => entityType != null &&
             (from property in entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            where property.Name == _options.IdPropertyName &&
-                property.CanRead
-            select property).Count() == 1;
+             where property.Name == _options.IdPropertyName &&
+                 property.CanRead
+             select property).Count() == 1;
 
-        private bool TryGetIdPropertyValue(object? obj, out object? val)
+        private bool TryGetIdPropertyValue(object? obj, out object? val, out Type? idPropertyType)
         {
             if (obj == null)
             {
                 val = null;
+                idPropertyType = null;
                 return false;
             }
 
@@ -293,14 +367,15 @@ namespace Hal.AspNetCore
             if (idProperty == null)
             {
                 val = null;
+                idPropertyType = null;
                 return false;
             }
 
             val = idProperty.GetValue(obj);
+            idPropertyType = idProperty.PropertyType;
             return true;
         }
 
         #endregion Private Methods
-
     }
 }

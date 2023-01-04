@@ -1,36 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>C#/.NET Core implementation of Hypertext Application Language (HAL).</Description>
-    <Copyright>Copyright (C) 2017-2022 by Sunny Chen.</Copyright>
-    <Authors>Sunny Chen</Authors>
-    <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.1;net7.0</TargetFrameworks>
     <AssemblyName>Hal</AssemblyName>
-    <AssemblyOriginatorKeyFile>../../tools/hal.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>Hal</PackageId>
     <PackageTags>hal;hypertext-application-language</PackageTags>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <RepositoryUrl>https://github.com/daxnet/hal</RepositoryUrl>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <Nullable>enable</Nullable>
-    <LangVersion>10.0</LangVersion>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>0.999.0.0</AssemblyVersion>
-    <FileVersion>0.999.0.0</FileVersion>
-    <Version>0.999.0-dev</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">

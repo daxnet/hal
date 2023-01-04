@@ -23,7 +23,7 @@ if (($sourceBranch -ne "refs/heads/main") -and ($sourceBranch -ne "refs/heads/de
 	}
 }
 
-$files = Get-ChildItem . -include project.json,AssemblyInfo.cs,*.csproj -Recurse
+$files = Get-ChildItem . -include Directory.Build.targets -Recurse
 foreach ($file in $files)
 {
 	(Get-Content $file.FullName) |
