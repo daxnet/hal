@@ -90,28 +90,6 @@ namespace Hal.AspNetCore
             return serviceCollection;
         }
 
-        internal static string Dump(this HttpRequest httpRequest)
-        {
-            var sb = new StringBuilder();
-            var properties = from p in typeof(HttpRequest)
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                             where p.CanRead
-                             select p;
-            foreach(var p in properties)
-            {
-                try
-                {
-                    sb.AppendLine($"{p.Name} = {p.GetValue(httpRequest)}");
-                }
-                catch { continue; }
-            }
-
-            sb.AppendLine("Headers:");
-            httpRequest.Headers.ToList()
-                .ForEach(h => sb.AppendLine($"  {h.Key} = {h.Value}"));
-
-            return sb.ToString();
-        }
         #endregion Public Methods
 
     }
