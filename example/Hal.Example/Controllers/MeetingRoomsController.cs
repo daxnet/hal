@@ -85,11 +85,7 @@ namespace Hal.Example.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetByName(string name)
-            => MeetingRoom.FakeRooms.Any(mr => mr.Name == name)
-            ?
-            Ok(MeetingRoom.FakeRooms.Where(mr => mr.Name == name))
-            :
-            NotFound($"Meeting Room {name} not found.");
+            => Ok(MeetingRoom.FakeRooms.Where(f => f.Name.Contains(name)));
 
         #endregion Public Methods
     }

@@ -45,6 +45,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System.Collections;
 using System.Dynamic;
+using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -56,6 +57,7 @@ namespace Hal.AspNetCore
     /// </summary>
     public class SupportsHalAttribute : ResultFilterAttribute
     {
+
         #region Private Fields
 
         private static readonly JsonSerializerSettings _jsonSerializerSettings = new()
@@ -207,115 +209,18 @@ namespace Hal.AspNetCore
 
         #region Private Methods
 
-        private static bool IsPagedResult(IActionResult result, out IPagedResult? pagedResult, out Type? entityType)
-        {
-            var isPagedResult = result is OkObjectResult okObj &&
-                okObj.Value != null &&
-                okObj.Value.GetType().IsGenericType &&
-                okObj.Value.GetType().GetGenericTypeDefinition() == typeof(PagedResult<>);
-            if (isPagedResult)
-            {
-                entityType = ((OkObjectResult)result).Value?.GetType().GetGenericArguments().First();
-                pagedResult = (result as OkObjectResult)?.Value as IPagedResult;
-            }
-            else
-            {
-                entityType = null;
-                pagedResult = null;
-            }
-
-            return isPagedResult;
-        }
-
-        private static string MakeCamelCase(string src) => $"{src[0].ToString().ToLower()}{src[1..]}";
-
-        private IEnumerable<JObject> ConvertListToHalResourceObjects(ResultExecutingContext context, IEnumerable state)
-        {
-            var newState = new List<JObject>();
-            var entityObjectSerializer = JsonSerializer.Create(_jsonSerializerSettings);
-            foreach (var obj in state)
-            {
-                if (obj != null && TryGetIdPropertyValue(obj, out var idValue, out var idPropertyType))
-                {
-                    JObject jobj = JObject.FromObject(obj, entityObjectSerializer);
-                    jobj.Add("_links", JToken.FromObject(new
-                    {
-                        self = new
-                        {
-                            href = $"{GenerateLink(context, useIdRoute: true, idValue: idValue, idPropertyType: idPropertyType)}"
-                        }
-                    }));
-                    var modifiedObj = jobj.ToObject<JObject>();
-                    if (modifiedObj != null)
-                    {
-                        newState.Add(modifiedObj);
-                    }
-                }
-            }
-
-            return newState;
-        }
-
-        private string GenerateLink(ResultExecutingContext context,
+        private static string GenerateLink(ResultExecutingContext context,
             IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null,
-            bool useIdRoute = false,
-            object? idValue = null,
-            Type? idPropertyType = null)
+            string? pathOverride = default)
         {
             var request = context.HttpContext.Request;
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug(request.Dump());
-            }
             var scheme = request.Scheme;
             var host = request.Host;
             var pathBase = request.PathBase;
             var path = request.Path;
-            if (useIdRoute && idValue != null && idPropertyType != null)
+            if (!string.IsNullOrEmpty(pathOverride))
             {
-                if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
-                {
-                    var methods = from m in controllerActionDescriptor.ControllerTypeInfo.DeclaredMethods
-                                  let parameters = m.GetParameters()
-                                  where m.IsPublic &&
-                                  (typeof(IActionResult).IsAssignableFrom(m.ReturnType) || typeof(Task<IActionResult>).IsAssignableFrom(m.ReturnType)) &&
-                                  parameters.Length == 1 &&
-                                  parameters[0].ParameterType == idPropertyType
-                                  select new
-                                  {
-                                      Method = m,
-                                      Parameter = parameters[0]
-                                  };
-                    if (methods.Any())
-                    {
-                        MethodInfo? getByIdMethod = null;
-                        ParameterInfo? getByIdMethodParameter = null;
-                        if (methods.Count() > 1)
-                        {
-                            var methodSig = methods.FirstOrDefault(m => m.Method.IsDefined(typeof(GetByIdMethodImplAttribute), false));
-                            if (methodSig != null)
-                            {
-                                getByIdMethod = methodSig.Method;
-                                getByIdMethodParameter = methodSig.Parameter;
-                            }
-                        }
-                        else
-                        {
-                            getByIdMethod = methods.First().Method;
-                            getByIdMethodParameter = methods.First().Parameter;
-                        }
-
-                        if (getByIdMethod != null && getByIdMethodParameter != null && context.Controller is ControllerBase ctlr)
-                        {
-                            var dict = new Dictionary<string, object>
-                            {
-                                { getByIdMethodParameter.Name!, idValue }
-                            };
-
-                            path = ctlr.Url.Action(getByIdMethod.Name, controllerActionDescriptor.ControllerName, dict);
-                        }
-                    }
-                }
+                path = pathOverride;
             }
 
             var substQuery = new Dictionary<string, StringValues>();
@@ -346,6 +251,135 @@ namespace Hal.AspNetCore
             return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery));
         }
 
+        private static (string?, string?, string?) InferGetByIdControllerActionName(ResultExecutingContext context, Type idPropertyType)
+        {
+            if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+            {
+                var methods = from m in controllerActionDescriptor.ControllerTypeInfo.DeclaredMethods
+                              let parameters = m.GetParameters()
+                              where m.IsPublic &&
+                              (typeof(IActionResult).IsAssignableFrom(m.ReturnType) || typeof(Task<IActionResult>).IsAssignableFrom(m.ReturnType)) &&
+                              parameters.Length == 1 &&
+                              parameters[0].ParameterType == idPropertyType
+                              select new
+                              {
+                                  Method = m,
+                                  Parameter = parameters[0]
+                              };
+                if (methods.Any())
+                {
+                    MethodInfo? getByIdMethod = null;
+                    ParameterInfo? getByIdMethodParameter = null;
+                    if (methods.Count() > 1)
+                    {
+                        var methodSig = methods.FirstOrDefault(m => m.Method.IsDefined(typeof(GetByIdMethodImplAttribute), false));
+                        if (methodSig != null)
+                        {
+                            getByIdMethod = methodSig.Method;
+                            getByIdMethodParameter = methodSig.Parameter;
+                        }
+                    }
+                    else
+                    {
+                        getByIdMethod = methods.First().Method;
+                        getByIdMethodParameter = methods.First().Parameter;
+                    }
+
+                    return (controllerActionDescriptor.ControllerName, getByIdMethod?.Name, getByIdMethodParameter?.Name);
+                }
+            }
+
+            return (default, default, default);
+        }
+
+        private static bool IsPagedResult(IActionResult result, out IPagedResult? pagedResult, out Type? entityType)
+        {
+            var isPagedResult = result is OkObjectResult okObj &&
+                okObj.Value != null &&
+                okObj.Value.GetType().IsGenericType &&
+                okObj.Value.GetType().GetGenericTypeDefinition() == typeof(PagedResult<>);
+            if (isPagedResult)
+            {
+                entityType = ((OkObjectResult)result).Value?.GetType().GetGenericArguments().First();
+                pagedResult = (result as OkObjectResult)?.Value as IPagedResult;
+            }
+            else
+            {
+                entityType = null;
+                pagedResult = null;
+            }
+
+            return isPagedResult;
+        }
+
+        private static string MakeCamelCase(string src) => $"{src[0].ToString().ToLower()}{src[1..]}";
+
+        private IEnumerable<JObject> ConvertListToHalResourceObjects(ResultExecutingContext context, IEnumerable state)
+        {
+            var emptyResult = Array.Empty<JObject>();
+            if (!state.Cast<object>().Any())
+            {
+                return emptyResult;
+            }
+
+            var firstObj = state.Cast<object>().First();
+            // assumes that all objects in the list are having the same Id property
+            if (TryGetIdPropertyValue(firstObj, out _, out var firstObjIdPropertyType) && firstObjIdPropertyType is not null)
+            {
+                var newState = new List<JObject>();
+                var entityObjectSerializer = JsonSerializer.Create(_jsonSerializerSettings);
+                
+                var (controllerName, getByIdMethodName, getByIdParamName) = InferGetByIdControllerActionName(context, firstObjIdPropertyType);
+
+                foreach (var obj in state)
+                {
+                    if (obj != null && TryGetIdPropertyValue(obj, out var idValue, out _))
+                    {
+                        JObject jobj = JObject.FromObject(obj, entityObjectSerializer);
+                        if (!string.IsNullOrEmpty(controllerName) &&
+                            !string.IsNullOrEmpty(getByIdMethodName) &&
+                            !string.IsNullOrEmpty(getByIdParamName) &&
+                            idValue is not null &&
+                            context.Controller is ControllerBase ctlr)
+                        {
+                            var dict = new Dictionary<string, object>()
+                            {
+                                { getByIdParamName, idValue }
+                            };
+                            var pathOverride = ctlr.Url.Action(getByIdMethodName, controllerName, dict);
+                            jobj.Add("_links", JToken.FromObject(new
+                            {
+                                self = new
+                                {
+                                    href = $"{GenerateLink(context, pathOverride: pathOverride)}"
+                                }
+                            }));
+                        }
+                        else
+                        {
+                            _logger.LogDebug("Unable to locate the controller action that can return the object by a given ID. Use the link to the current resource as the self link.");
+                            jobj.Add("_links", JToken.FromObject(new
+                            {
+                                self = new
+                                {
+                                    href = $"{GenerateLink(context)}"
+                                }
+                            }));
+                        }
+                       
+                        var modifiedObj = jobj.ToObject<JObject>();
+                        if (modifiedObj != null)
+                        {
+                            newState.Add(modifiedObj);
+                        }
+                    }
+                }
+
+                return newState;
+            }
+
+            return emptyResult;
+        }
         private bool HasIdProperty(Type? entityType) => entityType != null &&
             (from property in entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
              where property.Name == _options.IdPropertyName &&
@@ -377,5 +411,6 @@ namespace Hal.AspNetCore
         }
 
         #endregion Private Methods
+
     }
 }

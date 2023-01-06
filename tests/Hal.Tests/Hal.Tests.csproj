@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>0.999.0</VersionPrefix>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <AssemblyName>Hal.Tests</AssemblyName>
     <PackageId>Hal.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
