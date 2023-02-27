@@ -2,9 +2,9 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>Hal.AspNetCore</AssemblyName>
 		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageId>Hal.AspNetCoreIntegration</PackageId>
 		<PackageTags>hal;hypertext-application-language</PackageTags>
 		<PackageLicenseUrl></PackageLicenseUrl>
@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Hal\Hal.csproj" />
+		<ProjectReference Include="..\Hal\Hal.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,24 +1,18 @@
 <Project>
     <PropertyGroup>
         <Description>C#/.NET Core implementation of Hypertext Application Language (HAL).</Description>
-        <Copyright>Copyright (C) 2017-2023 by Sunny Chen</Copyright>
-        <Authors>Sunny Chen</Authors>
-        <AssemblyVersion>0.999.0.0</AssemblyVersion>
-		<FileVersion>0.999.0.0</FileVersion>
-		<Version>0.999.0-dev</Version>
-        <Nullable>enable</Nullable>
-        <LangVersion>10.0</LangVersion>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <AssemblyOriginatorKeyFile>../../tools/hal.snk</AssemblyOriginatorKeyFile>
-        <SignAssembly>true</SignAssembly>
-        <RepositoryUrl>https://github.com/daxnet/hal</RepositoryUrl>
-        <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-        <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-        <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-        <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-        <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-        <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Copyright>Copyright (C) 2017-2023 by Sunny Chen</Copyright>
+		<Authors>Sunny Chen</Authors>
+		<Nullable>enable</Nullable>
+		<LangVersion>10.0</LangVersion>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<AssemblyOriginatorKeyFile>../../tools/hal.snk</AssemblyOriginatorKeyFile>
+		<SignAssembly>true</SignAssembly>
+		<RepositoryUrl>https://github.com/daxnet/hal</RepositoryUrl>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<Version>1.0.0-dev</Version>
     </PropertyGroup>
 </Project>
