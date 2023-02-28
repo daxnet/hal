@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHalSupport(options =>
-{
-    options.IdPropertyName = "ID";
-});
+builder.Services.AddHalSupport(builder.Configuration.GetSection("hal"));
 builder.Services.AddControllers(options =>
 {
     options.SuppressAsyncSuffixInActionNames = false;

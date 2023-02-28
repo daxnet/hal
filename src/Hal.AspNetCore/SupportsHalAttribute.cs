@@ -1,4 +1,16 @@
-﻿// ---------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright company="PerkinElmer Inc.">
+//   Copyright (c) 2016-2021 PerkinElmer Inc.,
+//   940 Winter Street, Waltham, MA 02451.
+//   All rights reserved.
+//   This software is the confidential and proprietary information
+//   of PerkinElmer Inc. ("Confidential Information"). You shall not
+//   disclose such Confidential Information and may not use it in any way,
+//   absent an express written license agreement between you and PerkinElmer Inc.
+//   that authorizes such use.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //  _    _          _
 // | |  | |   /\   | |
 // | |__| |  /  \  | |
@@ -32,11 +44,14 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 using Hal.Builders;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -70,6 +85,7 @@ namespace Hal.AspNetCore
             }
         };
 
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ILogger<SupportsHalAttribute> _logger;
         private readonly SupportsHalOptions _options;
 
@@ -81,8 +97,8 @@ namespace Hal.AspNetCore
         /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
         /// </summary>
         /// <param name="options">The options that is used for configuring the HAL support.</param>
-        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger) =>
-            (Order, _options, _logger) = (2, options.Value, logger);
+        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment) =>
+            (Order, _options, _logger, _hostingEnvironment) = (2, options.Value, logger, hostingEnvironment);
 
         #endregion Public Constructors
 
@@ -209,58 +225,19 @@ namespace Hal.AspNetCore
 
         #region Private Methods
 
-        private static string GenerateLink(ResultExecutingContext context,
-            IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null,
-            string? pathOverride = default)
-        {
-            var request = context.HttpContext.Request;
-            var scheme = request.Scheme;
-            var host = request.Host;
-            var pathBase = request.PathBase;
-            var path = request.Path;
-            if (!string.IsNullOrEmpty(pathOverride))
-            {
-                path = pathOverride;
-            }
-
-            var substQuery = new Dictionary<string, StringValues>();
-
-            if (querySubstitution != null)
-            {
-                if (request.Query?.Count > 0)
-                {
-                    request.Query.ToList().ForEach(q => substQuery.Add(q.Key, q.Value));
-                    foreach (var subst in querySubstitution)
-                    {
-                        if (substQuery.ContainsKey(subst.Key))
-                        {
-                            substQuery[subst.Key] = subst.Value;
-                        }
-                        else
-                        {
-                            substQuery.Add(subst.Key, subst.Value);
-                        }
-                    }
-                }
-                else
-                {
-                    querySubstitution.ToList().ForEach(kvp => substQuery.Add(kvp.Key, kvp.Value));
-                }
-            }
-
-            return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery));
-        }
-
         private static (string?, string?, string?) InferGetByIdControllerActionName(ResultExecutingContext context, Type idPropertyType)
         {
             if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
             {
-                var methods = from m in controllerActionDescriptor.ControllerTypeInfo.DeclaredMethods
-                              let parameters = m.GetParameters()
-                              where m.IsPublic &&
-                              (typeof(IActionResult).IsAssignableFrom(m.ReturnType) || typeof(Task<IActionResult>).IsAssignableFrom(m.ReturnType)) &&
-                              parameters.Length == 1 &&
-                              parameters[0].ParameterType == idPropertyType
+                var methods = from m in controllerActionDescriptor.ControllerTypeInfo.GetMethods()
+                              let parameters = m.GetParameters() // gets parameter definition of the method
+                              let customHttpAttributes = m.GetCustomAttributes(false).Where(attr => attr.GetType().IsSubclassOf(typeof(HttpMethodAttribute))) // gets the decorated HttpMethodAttributes
+                              where m.IsPublic && // the method should be public
+                              (!customHttpAttributes.Any() || customHttpAttributes.Any(a => a.GetType() == typeof(HttpGetAttribute))) && // the method should either be decorated by the HttpGetAttribute, or not decorated by any HttpMethodAttribute
+                              (!m.DeclaringType?.Namespace?.StartsWith("Microsoft") ?? true) && // ignore the methods from Microsoft namespace (which is tricky, but helpful for filtering out unnecessary methods)
+                              (typeof(IActionResult).IsAssignableFrom(m.ReturnType) || typeof(Task<IActionResult>).IsAssignableFrom(m.ReturnType)) && // the method return type should be of IActionResult or Task<IActionResult>
+                              parameters.Length == 1 && // method should have only 1 parameter
+                              parameters[0].ParameterType == idPropertyType // the type of the parameter should be the same as the Id property type
                               select new
                               {
                                   Method = m,
@@ -328,7 +305,7 @@ namespace Hal.AspNetCore
             {
                 var newState = new List<JObject>();
                 var entityObjectSerializer = JsonSerializer.Create(_jsonSerializerSettings);
-                
+
                 var (controllerName, getByIdMethodName, getByIdParamName) = InferGetByIdControllerActionName(context, firstObjIdPropertyType);
 
                 foreach (var obj in state)
@@ -366,7 +343,7 @@ namespace Hal.AspNetCore
                                 }
                             }));
                         }
-                       
+
                         var modifiedObj = jobj.ToObject<JObject>();
                         if (modifiedObj != null)
                         {
@@ -379,6 +356,57 @@ namespace Hal.AspNetCore
             }
 
             return emptyResult;
+        }
+
+        private string GenerateLink(ResultExecutingContext context,
+                                            IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null,
+            string? pathOverride = default)
+        {
+            var request = context.HttpContext.Request;
+            string scheme;
+            if (_options.UseHttpsScheme.HasValue)
+            {
+                scheme = _options.UseHttpsScheme.Value ? "https" : request.Scheme;
+            }
+            else
+            {
+                scheme = _hostingEnvironment.IsProduction() ? "https" : request.Scheme;
+            }
+            
+            var host = request.Host;
+            var pathBase = request.PathBase;
+            var path = request.Path;
+            if (!string.IsNullOrEmpty(pathOverride))
+            {
+                path = pathOverride;
+            }
+
+            var substQuery = new Dictionary<string, StringValues>();
+
+            if (querySubstitution != null)
+            {
+                if (request.Query?.Count > 0)
+                {
+                    request.Query.ToList().ForEach(q => substQuery.Add(q.Key, q.Value));
+                    foreach (var subst in querySubstitution)
+                    {
+                        if (substQuery.ContainsKey(subst.Key))
+                        {
+                            substQuery[subst.Key] = subst.Value;
+                        }
+                        else
+                        {
+                            substQuery.Add(subst.Key, subst.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    querySubstitution.ToList().ForEach(kvp => substQuery.Add(kvp.Key, kvp.Value));
+                }
+            }
+
+            return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery));
         }
         private bool HasIdProperty(Type? entityType) => entityType != null &&
             (from property in entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance)

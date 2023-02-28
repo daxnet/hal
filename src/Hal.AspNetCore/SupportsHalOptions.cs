@@ -53,6 +53,14 @@ namespace Hal.AspNetCore
         /// </summary>
         public string IdPropertyName { get; set; } = "Id";
 
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> value which indicates if the HTTPS scheme
+        /// should be used when generating the href links. By default, the value will
+        /// be inferred from the type of the hosting environment. If it is Production,
+        /// the HTTPS scheme will be used, otherwise, it will be HTTP.
+        /// </summary>
+        public bool? UseHttpsScheme { get; set; }
+
         #endregion Public Properties
     }
 }
