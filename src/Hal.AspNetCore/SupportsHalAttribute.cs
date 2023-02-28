@@ -358,9 +358,7 @@ namespace Hal.AspNetCore
             return emptyResult;
         }
 
-        private string GenerateLink(ResultExecutingContext context,
-                                            IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null,
-            string? pathOverride = default)
+        private string GenerateLink(ResultExecutingContext context, IEnumerable<KeyValuePair<string, StringValues>>? querySubstitution = null, string? pathOverride = default)
         {
             var request = context.HttpContext.Request;
             string scheme;
@@ -374,7 +372,7 @@ namespace Hal.AspNetCore
             }
             
             var host = request.Host;
-            var pathBase = request.PathBase;
+            var pathBase = string.IsNullOrEmpty(pathOverride) ? request.PathBase : PathString.Empty;
             var path = request.Path;
             if (!string.IsNullOrEmpty(pathOverride))
             {
