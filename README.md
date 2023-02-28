@@ -263,6 +263,16 @@ Note that for each of the object in the `meetingRooms` array, it has the `self` 
 
 You can try running the example in this code repo to understand how the above mechanism works.
 
+### HTTP or HTTPS
+Usually, if the service is deployed in production (`IWebHostEnvironment.IsProduction()` returns true), the scheme of the generated `self.href` link will be `https`, otherwise, it will follow the original scheme of the request. However, you are able to override the scheme by using the `useHttpsScheme` option, e.g.:
+```json
+"hal": {
+  "enabled": true,
+  "useHttpsScheme": false
+}
+```
+In such case, the `http` will be the scheme. This is to fix the incorrect scheme issue that occurs when the service is deployed behind a reversed proxy like nginx or ALB deployed under HTTPS but the service itself listens to the insecure HTTP port.
+
 ### Integrate with nginx Reverse Proxy
 The application that is expected to be deployed behind an nginx reverse proxy should have the `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` and `X-Forwarded-Port` forwarded when the HAL is enabled. Following is an example of the `nginx.conf` file:
 ```nginx
