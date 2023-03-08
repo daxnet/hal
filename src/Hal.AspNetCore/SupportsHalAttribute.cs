@@ -72,7 +72,6 @@ namespace Hal.AspNetCore
     /// </summary>
     public class SupportsHalAttribute : ResultFilterAttribute
     {
-
         #region Private Fields
 
         private static readonly JsonSerializerSettings _jsonSerializerSettings = new()
@@ -185,6 +184,12 @@ namespace Hal.AspNetCore
                 else if (context.Result is ObjectResult objectResult && objectResult.Value != null)
                 {
                     originalStatusCode = objectResult.StatusCode ?? (int)HttpStatusCode.OK;
+                    if (originalStatusCode < 200 || originalStatusCode > 299)
+                    {
+                        await base.OnResultExecutionAsync(context, next);
+                        return;
+                    }
+
                     IBuilder? resourceBuilder;
                     if (objectResult.Value is IEnumerable enumerableResult)
                     {
@@ -370,7 +375,7 @@ namespace Hal.AspNetCore
             {
                 scheme = _hostingEnvironment.IsProduction() ? "https" : request.Scheme;
             }
-            
+
             var host = request.Host;
             var pathBase = string.IsNullOrEmpty(pathOverride) ? request.PathBase : PathString.Empty;
             var path = request.Path;
@@ -406,6 +411,7 @@ namespace Hal.AspNetCore
 
             return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery));
         }
+
         private bool HasIdProperty(Type? entityType) => entityType != null &&
             (from property in entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
              where property.Name == _options.IdPropertyName &&
@@ -437,6 +443,5 @@ namespace Hal.AspNetCore
         }
 
         #endregion Private Methods
-
     }
 }
