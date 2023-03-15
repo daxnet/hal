@@ -1,16 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright company="PerkinElmer Inc.">
-//   Copyright (c) 2016-2021 PerkinElmer Inc.,
-//   940 Winter Street, Waltham, MA 02451.
-//   All rights reserved.
-//   This software is the confidential and proprietary information
-//   of PerkinElmer Inc. ("Confidential Information"). You shall not
-//   disclose such Confidential Information and may not use it in any way,
-//   absent an express written license agreement between you and PerkinElmer Inc.
-//   that authorizes such use.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
+﻿// ---------------------------------------------------------------------------
 //  _    _          _
 // | |  | |   /\   | |
 // | |__| |  /  \  | |
@@ -85,6 +73,7 @@ namespace Hal.AspNetCore
             }
         };
 
+        private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ILogger<SupportsHalAttribute> _logger;
         private readonly SupportsHalOptions _options;
@@ -97,8 +86,8 @@ namespace Hal.AspNetCore
         /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
         /// </summary>
         /// <param name="options">The options that is used for configuring the HAL support.</param>
-        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment) =>
-            (Order, _options, _logger, _hostingEnvironment) = (2, options.Value, logger, hostingEnvironment);
+        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment, IUrlHelperFactory urlHelperFactory) =>
+            (Order, _options, _logger, _hostingEnvironment, _urlHelperFactory) = (2, options.Value, logger, hostingEnvironment, urlHelperFactory);
 
         #endregion Public Constructors
 
@@ -186,7 +175,12 @@ namespace Hal.AspNetCore
                 {
                     originalStatusCode = objectResult.StatusCode ?? (int)HttpStatusCode.OK;
                     IBuilder? resourceBuilder;
-                    if (objectResult.Value is IEnumerable enumerableResult)
+                    if (objectResult is CreatedAtActionResult createdAtActionResult)
+                    {
+                        var urlHelper = _urlHelperFactory.GetUrlHelper(context);
+                        selfLinkItem = urlHelper.ActionLink(createdAtActionResult.ActionName, createdAtActionResult.ControllerName, createdAtActionResult.RouteValues) ?? selfLinkItem;
+                    }
+                    if ((objectResult.Value is not string) && (objectResult.Value is IEnumerable enumerableResult))
                     {
                         var newState = ConvertListToHalResourceObjects(context, enumerableResult);
                         resourceBuilder = new ResourceBuilder()
