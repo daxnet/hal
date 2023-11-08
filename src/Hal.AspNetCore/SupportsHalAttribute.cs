@@ -48,7 +48,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System.Collections;
 using System.Dynamic;
-using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -62,7 +61,7 @@ namespace Hal.AspNetCore
     {
         #region Private Fields
 
-        private static readonly JsonSerializerSettings _jsonSerializerSettings = new()
+        private static readonly JsonSerializerSettings _defaultJsonSerializerSettings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
             Formatting = Formatting.None,
@@ -72,6 +71,7 @@ namespace Hal.AspNetCore
             }
         };
 
+        private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ILogger<SupportsHalAttribute> _logger;
@@ -86,7 +86,14 @@ namespace Hal.AspNetCore
         /// </summary>
         /// <param name="options">The options that is used for configuring the HAL support.</param>
         public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment, IUrlHelperFactory urlHelperFactory) =>
-            (Order, _options, _logger, _hostingEnvironment, _urlHelperFactory) = (2, options.Value, logger, hostingEnvironment, urlHelperFactory);
+            (Order, _options, _logger, _hostingEnvironment, _urlHelperFactory, _jsonSerializerSettings) = (2, options.Value, logger, hostingEnvironment, urlHelperFactory, _defaultJsonSerializerSettings);
+
+        /// <summary>
+        /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
+        /// </summary>
+        /// <param name="options">The options that is used for configuring the HAL support.</param>
+        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment, IUrlHelperFactory urlHelperFactory, JsonSerializerSettings jsonSerializerSettings) =>
+            (Order, _options, _logger, _hostingEnvironment, _urlHelperFactory, _jsonSerializerSettings) = (2, options.Value, logger, hostingEnvironment, urlHelperFactory, jsonSerializerSettings);
 
         #endregion Public Constructors
 
