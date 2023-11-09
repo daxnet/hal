@@ -92,8 +92,9 @@ namespace Hal.AspNetCore
         /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
         /// </summary>
         /// <param name="options">The options that is used for configuring the HAL support.</param>
-        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment, IUrlHelperFactory urlHelperFactory, JsonSerializerSettings jsonSerializerSettings) =>
-            (Order, _options, _logger, _hostingEnvironment, _urlHelperFactory, _jsonSerializerSettings) = (2, options.Value, logger, hostingEnvironment, urlHelperFactory, jsonSerializerSettings);
+        /// <param name="jsonSerializerSettings">The options that is used for configuring json serializer settings.</param>
+        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, IOptions<JsonSerializerSettings> jsonSerializerSettings, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment, IUrlHelperFactory urlHelperFactory) =>
+            (Order, _options, _jsonSerializerSettings, _logger, _hostingEnvironment, _urlHelperFactory) = (2, options.Value, jsonSerializerSettings.Value, logger, hostingEnvironment, urlHelperFactory);
 
         #endregion Public Constructors
 
