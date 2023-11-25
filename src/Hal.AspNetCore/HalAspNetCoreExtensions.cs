@@ -62,6 +62,21 @@ namespace Hal.AspNetCore
         }
 
         /// <summary>
+        /// Adds the HAL support to the ASP.NET Core application.
+        /// </summary>
+        /// <param name="serviceCollection">The <see cref="IServiceCollection"/> instance to which the HAL support is added.</param>
+        /// <param name="options">The HAL options.</param>
+        /// <param name="jsonSerializerSettings">Json serializer settings.</param>
+        /// <returns>The service collection.</returns>
+        public static IServiceCollection AddHalSupport(this IServiceCollection serviceCollection, Action<SupportsHalOptions> options, Action<JsonSerializerSettings> jsonSerializerSettings)
+        {
+            serviceCollection.Configure(options);
+            serviceCollection.Configure(jsonSerializerSettings);
+            serviceCollection.AddScoped<SupportsHalAttribute>();
+            return serviceCollection;
+        }
+
+        /// <summary>
         /// Adds the HAL support to the ASP.NET Core application with default options.
         /// </summary>
         /// <param name="serviceCollection">The <see cref="IServiceCollection"/> instance to which the HAL support is added.</param>
