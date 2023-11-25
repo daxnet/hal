@@ -115,7 +115,8 @@ namespace Hal
         /// <returns>The string representation of the current instance.</returns>
         public string ToString(JsonSerializerSettings jsonSerializerSettings)
         {
-            jsonSerializerSettings.Converters = converters;
+            if (jsonSerializerSettings.Converters.Count == 0)
+                jsonSerializerSettings.Converters = converters;
             return JsonConvert.SerializeObject(this, jsonSerializerSettings);
         }
         #endregion
