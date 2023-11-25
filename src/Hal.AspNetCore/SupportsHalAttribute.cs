@@ -61,16 +61,6 @@ namespace Hal.AspNetCore
     {
         #region Private Fields
 
-        private static readonly JsonSerializerSettings _defaultJsonSerializerSettings = new()
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.None,
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            }
-        };
-
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IWebHostEnvironment _hostingEnvironment;
@@ -80,13 +70,6 @@ namespace Hal.AspNetCore
         #endregion Private Fields
 
         #region Public Constructors
-
-        /// <summary>
-        /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
-        /// </summary>
-        /// <param name="options">The options that is used for configuring the HAL support.</param>
-        public SupportsHalAttribute(IOptions<SupportsHalOptions> options, ILogger<SupportsHalAttribute> logger, IWebHostEnvironment hostingEnvironment, IUrlHelperFactory urlHelperFactory) =>
-            (Order, _options, _logger, _hostingEnvironment, _urlHelperFactory, _jsonSerializerSettings) = (2, options.Value, logger, hostingEnvironment, urlHelperFactory, _defaultJsonSerializerSettings);
 
         /// <summary>
         /// Initializes a new instance of <c>SupportsHalAttribute</c> class.
