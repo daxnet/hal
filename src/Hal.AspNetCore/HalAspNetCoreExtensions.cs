@@ -37,6 +37,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Serialization;
 
 namespace Hal.AspNetCore
 {
@@ -57,6 +59,15 @@ namespace Hal.AspNetCore
         public static IServiceCollection AddHalSupport(this IServiceCollection serviceCollection, Action<SupportsHalOptions> options)
         {
             serviceCollection.Configure(options);
+            serviceCollection.Configure<JsonSerializerSettings>(settings =>
+            {
+                settings.NullValueHandling = NullValueHandling.Ignore;
+                settings.Formatting = Formatting.None;
+                settings.ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
+            });
             serviceCollection.AddScoped<SupportsHalAttribute>();
             return serviceCollection;
         }
@@ -66,7 +77,7 @@ namespace Hal.AspNetCore
         /// </summary>
         /// <param name="serviceCollection">The <see cref="IServiceCollection"/> instance to which the HAL support is added.</param>
         /// <param name="options">The HAL options.</param>
-        /// <param name="jsonSerializerSettings">Json serializer settings.</param>
+        /// <param name="jsonSerializerSettings">The settings of the Json serializer that determines how the result JSON should be generated.</param>
         /// <returns>The service collection.</returns>
         public static IServiceCollection AddHalSupport(this IServiceCollection serviceCollection, Action<SupportsHalOptions> options, Action<JsonSerializerSettings> jsonSerializerSettings)
         {
@@ -88,6 +99,15 @@ namespace Hal.AspNetCore
                 options.Enabled = true;
                 options.IdPropertyName = "Id";
             });
+            serviceCollection.Configure<JsonSerializerSettings>(settings =>
+            {
+                settings.NullValueHandling = NullValueHandling.Ignore;
+                settings.Formatting = Formatting.None;
+                settings.ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
+            });
             serviceCollection.AddScoped<SupportsHalAttribute>();
             return serviceCollection;
         }
@@ -101,6 +121,30 @@ namespace Hal.AspNetCore
         public static IServiceCollection AddHalSupport(this IServiceCollection serviceCollection, IConfigurationSection configSection)
         {
             serviceCollection.Configure<SupportsHalOptions>(configSection);
+            serviceCollection.Configure<JsonSerializerSettings>(settings =>
+            {
+                settings.NullValueHandling = NullValueHandling.Ignore;
+                settings.Formatting = Formatting.None;
+                settings.ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
+            });
+            serviceCollection.AddScoped<SupportsHalAttribute>();
+            return serviceCollection;
+        }
+
+        /// <summary>
+        /// Adds the HAL support to the ASP.NET Core application.
+        /// </summary>
+        /// <param name="serviceCollection">The <see cref="IServiceCollection"/>; instance to which the HAL support is added.</param>
+        /// <param name="configSection">The configuration section that holds the HAL configuration options.</param>
+        /// <param name="jsonSerializerSettings">The settings of the Json serializer that determines how the result JSON should be generated.</param>
+        /// <returns>The service collection.</returns>
+        public static IServiceCollection AddHalSupport(this IServiceCollection serviceCollection, IConfigurationSection configSection, Action<JsonSerializerSettings> jsonSerializerSettings)
+        {
+            serviceCollection.Configure<SupportsHalOptions>(configSection);
+            serviceCollection.Configure(jsonSerializerSettings);
             serviceCollection.AddScoped<SupportsHalAttribute>();
             return serviceCollection;
         }
