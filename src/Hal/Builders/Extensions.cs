@@ -227,7 +227,10 @@ namespace Hal.Builders
         /// <returns></returns>
         public static IEmbeddedResourceItemBuilder Resources(this IEmbeddedResourceBuilder builder, IEnumerable<IBuilder> resourceBuilders)
         {
-            Contract.Assert(resourceBuilders.Any());
+            if (resourceBuilders.Count() == 0)
+            {
+                return new EmbeddedResourceItemBuilder(builder, builder.Name, null);
+            }
 
             var itemBuilder = new EmbeddedResourceItemBuilder(
                 builder,

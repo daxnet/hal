@@ -93,8 +93,6 @@ namespace Hal.Tests
             var resource = builder.WithState(new { valuesCount = 10, totalsCount = 5 })
                 .AddCuriesLink().WithLinkItem("http://example.com/docs/rels/{rel}", "ea", true)
                 .AddEmbedded("ea:values", false)
-                // TODO: Determine what to do if empty enumerable is passed
-                // and Builder is of type IEmbeddedResourceBuilder
                 .Resources(
                     empty.Select(n => new ResourceBuilder()
                         .WithState(new { id = n })

@@ -62,7 +62,7 @@ namespace Hal.Builders
     {
         #region Private Fields
         private readonly string name;
-        private readonly IBuilder resourceBuilder;
+        private readonly IBuilder? resourceBuilder;
         #endregion
 
         #region Ctor        
@@ -72,7 +72,7 @@ namespace Hal.Builders
         /// <param name="context">The context.</param>
         /// <param name="name">The name of the embedded resource collection.</param>
         /// <param name="resourceBuilder">The resource builder that will build the embedded resource.</param>
-        public EmbeddedResourceItemBuilder(IBuilder context, string name, IBuilder resourceBuilder) : base(context)
+        public EmbeddedResourceItemBuilder(IBuilder context, string name, IBuilder? resourceBuilder) : base(context)
         {
             this.name = name;
             this.resourceBuilder = resourceBuilder;
@@ -99,6 +99,12 @@ namespace Hal.Builders
         /// </returns>
         protected override Resource DoBuild(Resource resource)
         {
+            // skip embedded resource if it doesn't exist
+            if (this.resourceBuilder == null)
+            {
+                return resource;
+            }
+
             var embeddedResource = resource.EmbeddedResources?.FirstOrDefault(x => !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
             if (embeddedResource == null)
             {
