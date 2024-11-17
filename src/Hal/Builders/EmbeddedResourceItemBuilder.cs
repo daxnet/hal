@@ -32,6 +32,7 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Hal.Builders
@@ -62,7 +63,7 @@ namespace Hal.Builders
     {
         #region Private Fields
         private readonly string name;
-        private readonly IBuilder resourceBuilder;
+        private readonly List<IBuilder> resourceBuilders = new();
         #endregion
 
         #region Ctor        
@@ -71,11 +72,11 @@ namespace Hal.Builders
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="name">The name of the embedded resource collection.</param>
-        /// <param name="resourceBuilder">The resource builder that will build the embedded resource.</param>
-        public EmbeddedResourceItemBuilder(IBuilder context, string name, IBuilder resourceBuilder) : base(context)
+        /// <param name="resourceBuilders">The resource builders that will build the embedded resource.</param>
+        public EmbeddedResourceItemBuilder(IBuilder context, string name, params IBuilder[] resourceBuilders) : base(context)
         {
             this.name = name;
-            this.resourceBuilder = resourceBuilder;
+            this.resourceBuilders.AddRange(resourceBuilders);
         }
         #endregion
 
@@ -89,7 +90,8 @@ namespace Hal.Builders
         public string Name => this.name;
         #endregion
 
-        #region Protected Methods        
+        #region Protected Methods
+
         /// <summary>
         /// Builds the <see cref="Resource" /> instance.
         /// </summary>
@@ -99,26 +101,28 @@ namespace Hal.Builders
         /// </returns>
         protected override Resource DoBuild(Resource resource)
         {
-            var embeddedResource = resource.EmbeddedResources?.FirstOrDefault(x => !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
+            var embeddedResource =
+                resource.EmbeddedResources?.FirstOrDefault(x =>
+                    !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
             if (embeddedResource == null)
             {
                 embeddedResource = new EmbeddedResource
                 {
                     Name = this.name,
-                    Resources = new ResourceCollection
-                    {
-                        this.resourceBuilder.Build()
-                    }
+                    Resources = new ResourceCollection()
                 };
+                
+                resourceBuilders.ForEach(rb => embeddedResource.Resources.Add(rb.Build()));
                 resource.EmbeddedResources?.Add(embeddedResource);
             }
             else
             {
-                embeddedResource.Resources.Add(this.resourceBuilder.Build());
+                resourceBuilders.ForEach(rb => embeddedResource.Resources.Add(rb.Build()));
             }
 
             return resource;
         }
+
         #endregion
     }
 }
