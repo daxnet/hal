@@ -34,6 +34,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace Hal.Builders
 {
@@ -216,6 +218,35 @@ namespace Hal.Builders
         {
             return new EmbeddedResourceItemBuilder(builder, builder.Name, resourceBuilder);
         }
+
+        /// <summary>
+        /// Adds the embedded resources to the embedded resource collection of the building resource.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
+        /// <param name="resourceBuilders">The enumerable resource builders that will build the embedded resources.</param>
+        /// <returns></returns>
+        public static IEmbeddedResourceItemBuilder Resources(this IEmbeddedResourceBuilder builder, IEnumerable<IBuilder> resourceBuilders)
+        {
+            if (resourceBuilders.Count() == 0)
+            {
+                return new EmbeddedResourceItemBuilder(builder, builder.Name, null);
+            }
+
+            var itemBuilder = new EmbeddedResourceItemBuilder(
+                builder,
+                builder.Name,
+                resourceBuilders.First()
+            );
+            foreach (var resource in resourceBuilders.Skip(1))
+            {
+                itemBuilder = new EmbeddedResourceItemBuilder(
+                    itemBuilder,
+                    itemBuilder.Name,
+                    resource
+                );
+            }
+            return itemBuilder;
+        }
         #endregion
 
         #region IEmbeddedResourceItemBuilder Extensions
@@ -229,6 +260,22 @@ namespace Hal.Builders
         public static IEmbeddedResourceItemBuilder Resource(this IEmbeddedResourceItemBuilder builder, IBuilder resourceBuilder)
         {
             return new EmbeddedResourceItemBuilder(builder, builder.Name, resourceBuilder);
+        }
+
+        /// <summary>
+        /// Adds the embedded resources to the embedded resource collection of the building resource.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
+        /// <param name="resourceBuilders">The enumerable resource builders that will build the embedded resources.</param>
+        /// <returns></returns>
+        public static IEmbeddedResourceItemBuilder Resources(this IEmbeddedResourceItemBuilder builder, IEnumerable<IBuilder> resourceBuilders)
+        {
+            // since IEmbeddedResourceBuilder
+            foreach (var resource in resourceBuilders)
+            {
+                builder = builder.Resource(resource);
+            }
+            return builder;
         }
 
         /// <summary>
