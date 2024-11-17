@@ -213,7 +213,7 @@ namespace Hal.Builders
         /// </summary>
         /// <param name="builder">The builder.</param>
         /// <param name="resourceBuilder">The resource builder that will build the embedded resource.</param>
-        /// <returns></returns>
+        /// <returns>An instance of <see cref="IEmbeddedResourceItemBuilder"/> class.</returns>
         public static IEmbeddedResourceItemBuilder Resource(this IEmbeddedResourceBuilder builder, IBuilder resourceBuilder)
         {
             return new EmbeddedResourceItemBuilder(builder, builder.Name, resourceBuilder);
@@ -223,30 +223,14 @@ namespace Hal.Builders
         /// Adds the embedded resources to the embedded resource collection of the building resource.
         /// </summary>
         /// <param name="builder">The builder.</param>
-        /// <param name="resourceBuilders">The enumerable resource builders that will build the embedded resources.</param>
-        /// <returns></returns>
-        public static IEmbeddedResourceItemBuilder Resources(this IEmbeddedResourceBuilder builder, IEnumerable<IBuilder> resourceBuilders)
+        /// <param name="resourceBuilders">A list of resource builders that build the embedded resource.</param>
+        /// <returns>An instance of <see cref="IEmbeddedResourceItemBuilder"/> class.</returns>
+        public static IEmbeddedResourceItemBuilder Resources(this IEmbeddedResourceBuilder builder,
+            IEnumerable<IBuilder> resourceBuilders)
         {
-            if (resourceBuilders.Count() == 0)
-            {
-                return new EmbeddedResourceItemBuilder(builder, builder.Name, null);
-            }
-
-            var itemBuilder = new EmbeddedResourceItemBuilder(
-                builder,
-                builder.Name,
-                resourceBuilders.First()
-            );
-            foreach (var resource in resourceBuilders.Skip(1))
-            {
-                itemBuilder = new EmbeddedResourceItemBuilder(
-                    itemBuilder,
-                    itemBuilder.Name,
-                    resource
-                );
-            }
-            return itemBuilder;
+            return new EmbeddedResourceItemBuilder(builder, builder.Name, resourceBuilders.ToArray());
         }
+
         #endregion
 
         #region IEmbeddedResourceItemBuilder Extensions
@@ -270,12 +254,7 @@ namespace Hal.Builders
         /// <returns></returns>
         public static IEmbeddedResourceItemBuilder Resources(this IEmbeddedResourceItemBuilder builder, IEnumerable<IBuilder> resourceBuilders)
         {
-            // since IEmbeddedResourceBuilder
-            foreach (var resource in resourceBuilders)
-            {
-                builder = builder.Resource(resource);
-            }
-            return builder;
+            return new EmbeddedResourceItemBuilder(builder, builder.Name, resourceBuilders.ToArray());
         }
 
         /// <summary>
