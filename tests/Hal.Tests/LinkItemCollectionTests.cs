@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Hal.Tests
@@ -11,35 +8,59 @@ namespace Hal.Tests
         [Fact]
         public void LinkItemCollectionToStringTest()
         {
-            var linkItem = new LinkItem("/orders");
-            linkItem.Name = "ea";
-            linkItem.Templated = true;
+            var linkItem = new LinkItem("/orders")
+            {
+                Name = "ea",
+                Templated = true
+            };
             linkItem.AddProperty("age", 10);
 
-            var collection = new LinkItemCollection()
+            var collection = new LinkItemCollection
             {
                 linkItem
             };
 
-            var json = collection.ToString();
+            var expected = JToken.Parse("""
+                                        {
+                                          "name" : "ea",
+                                          "href" : "/orders",
+                                          "templated" : true,
+                                          "age" : 10
+                                        }
+                                        """);
+            var actual = JToken.Parse(collection.ToString());
+            Assert.True(JToken.DeepEquals(expected, actual));
         }
 
         [Fact]
         public void LinkItemCollectionWithMultipleItemsToStringTest()
         {
-            var linkItem1 = new LinkItem("/orders");
-            linkItem1.Name = "ea";
-            linkItem1.Templated = true;
+            var linkItem1 = new LinkItem("/orders")
+            {
+                Name = "ea",
+                Templated = true
+            };
             linkItem1.AddProperty("age", 10);
 
             var linkItem2 = new LinkItem("/customers");
 
-            var collection = new LinkItemCollection()
+            var collection = new LinkItemCollection
             {
                 linkItem1, linkItem2
             };
 
-            var json = collection.ToString();
+            var expected = JToken.Parse("""
+                                        [ {
+                                          "name" : "ea",
+                                          "href" : "/orders",
+                                          "templated" : true,
+                                          "age" : 10
+                                        }, {
+                                          "href" : "/customers"
+                                        } ]
+                                        """);
+            var actual = JToken.Parse(collection.ToString());
+            Assert.True(JToken.DeepEquals(expected, actual));
         }
     }
 }

@@ -54,7 +54,7 @@ public sealed class LinkItem : ILinkItem
     /// <param name="href">The href attribute of the link item.</param>
     public LinkItem(string href)
     {
-        this.Href = href;
+        Href = href;
     }
     #endregion
 
@@ -142,7 +142,7 @@ public sealed class LinkItem : ILinkItem
     /// <param name="value">The value of the property.</param>
     public void AddProperty(string name, object value)
     {
-        this._properties.Add(name, value);
+        _properties.Add(name, value);
     }
 
     /// <summary>
@@ -150,7 +150,7 @@ public sealed class LinkItem : ILinkItem
     /// </summary>
     public void ClearProperties()
     {
-        this._properties.Clear();
+        _properties.Clear();
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ public sealed class LinkItem : ILinkItem
     /// <returns>The value of the property.</returns>
     public object GetProperty(string name)
     {
-        return this._properties[name];
+        return _properties[name];
     }
 
     /// <summary>
