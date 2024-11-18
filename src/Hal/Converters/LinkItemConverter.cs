@@ -36,114 +36,113 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 
-namespace Hal.Converters
+namespace Hal.Converters;
+
+/// <summary>
+/// Represents the JSON converter for link items.
+/// </summary>
+/// <seealso cref="Newtonsoft.Json.JsonConverter" />
+public sealed class LinkItemConverter : JsonConverter
 {
     /// <summary>
-    /// Represents the JSON converter for link items.
+    /// Determines whether this instance can convert the specified object type.
     /// </summary>
-    /// <seealso cref="Newtonsoft.Json.JsonConverter" />
-    public sealed class LinkItemConverter : JsonConverter
+    /// <param name="objectType">Type of the object.</param>
+    /// <returns>
+    /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+    /// </returns>
+    public override bool CanConvert(Type objectType)
     {
-        /// <summary>
-        /// Determines whether this instance can convert the specified object type.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <returns>
-        /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(LinkItem);
-        }
-
-        /// <summary>
-        /// Reads the JSON representation of the object.
-        /// </summary>
-        /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="existingValue">The existing value of object being read.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        /// <returns>
-        /// The object value.
-        /// </returns>
-        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => null;
-
-        /// <summary>
-        /// Writes the JSON representation of the object.
-        /// </summary>
-        /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-        {
-            LinkItem li = (LinkItem)value!;
-            writer.WriteStartObject();
-            if (!string.IsNullOrEmpty(li.Name) || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("name");
-                writer.WriteValue(li.Name);
-            }
-
-            if (!string.IsNullOrEmpty(li.Href) || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("href");
-                writer.WriteValue(li.Href);
-            }
-
-            if (li.Templated.HasValue || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("templated");
-                writer.WriteValue(li.Templated);
-            }
-
-            if (!string.IsNullOrEmpty(li.Type) || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("type");
-                writer.WriteValue(li.Type);
-            }
-
-            if (!string.IsNullOrEmpty(li.Deprecation) || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("deprecation");
-                writer.WriteValue(li.Deprecation);
-            }
-
-            if (!string.IsNullOrEmpty(li.Title) || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("title");
-                writer.WriteValue(li.Title);
-            }
-
-            if (!string.IsNullOrEmpty(li.Profile) || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("profile");
-                writer.WriteValue(li.Profile);
-            }
-
-            if (!string.IsNullOrEmpty(li.Hreflang) || serializer.NullValueHandling == NullValueHandling.Include)
-            {
-                writer.WritePropertyName("hreflang");
-                writer.WriteValue(li.Hreflang);
-            }
-
-            if (li.Properties.Count() > 0)
-            {
-                foreach(var p in li.Properties)
-                {
-                    writer.WritePropertyName(p.Key);
-                    serializer.Serialize(writer, p.Value);
-                }
-            }
-
-            writer.WriteEndObject();
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON; otherwise, <c>false</c>.
-        /// </value>
-        public override bool CanRead => false;
+        return objectType == typeof(LinkItem);
     }
+
+    /// <summary>
+    /// Reads the JSON representation of the object.
+    /// </summary>
+    /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
+    /// <param name="objectType">Type of the object.</param>
+    /// <param name="existingValue">The existing value of object being read.</param>
+    /// <param name="serializer">The calling serializer.</param>
+    /// <returns>
+    /// The object value.
+    /// </returns>
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => null;
+
+    /// <summary>
+    /// Writes the JSON representation of the object.
+    /// </summary>
+    /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="serializer">The calling serializer.</param>
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    {
+        LinkItem li = (LinkItem)value!;
+        writer.WriteStartObject();
+        if (!string.IsNullOrEmpty(li.Name) || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("name");
+            writer.WriteValue(li.Name);
+        }
+
+        if (!string.IsNullOrEmpty(li.Href) || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("href");
+            writer.WriteValue(li.Href);
+        }
+
+        if (li.Templated.HasValue || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("templated");
+            writer.WriteValue(li.Templated);
+        }
+
+        if (!string.IsNullOrEmpty(li.Type) || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("type");
+            writer.WriteValue(li.Type);
+        }
+
+        if (!string.IsNullOrEmpty(li.Deprecation) || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("deprecation");
+            writer.WriteValue(li.Deprecation);
+        }
+
+        if (!string.IsNullOrEmpty(li.Title) || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("title");
+            writer.WriteValue(li.Title);
+        }
+
+        if (!string.IsNullOrEmpty(li.Profile) || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("profile");
+            writer.WriteValue(li.Profile);
+        }
+
+        if (!string.IsNullOrEmpty(li.Hreflang) || serializer.NullValueHandling == NullValueHandling.Include)
+        {
+            writer.WritePropertyName("hreflang");
+            writer.WriteValue(li.Hreflang);
+        }
+
+        if (li.Properties.Count() > 0)
+        {
+            foreach(var p in li.Properties)
+            {
+                writer.WritePropertyName(p.Key);
+                serializer.Serialize(writer, p.Value);
+            }
+        }
+
+        writer.WriteEndObject();
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON; otherwise, <c>false</c>.
+    /// </value>
+    public override bool CanRead => false;
 }

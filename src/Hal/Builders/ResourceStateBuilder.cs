@@ -32,51 +32,50 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
-namespace Hal.Builders
+namespace Hal.Builders;
+
+/// <summary>
+/// Represents that the implemented classes are HAL resource builders
+/// that 
+/// </summary>
+/// <seealso cref="Hal.Builders.IBuilder" />
+public interface IResourceStateBuilder : IBuilder { }
+
+/// <summary>
+/// Represents an internal implementation of <see cref="IResourceStateBuilder"/> interface.
+/// </summary>
+/// <seealso cref="Hal.Builders.Builder" />
+/// <seealso cref="Hal.Builders.IResourceStateBuilder" />
+internal sealed class ResourceStateBuilder : Builder, IResourceStateBuilder
 {
-    /// <summary>
-    /// Represents that the implemented classes are HAL resource builders
-    /// that 
-    /// </summary>
-    /// <seealso cref="Hal.Builders.IBuilder" />
-    public interface IResourceStateBuilder : IBuilder { }
+    #region Private Fields
+    private readonly object _state;
+    #endregion
 
+    #region Ctor        
     /// <summary>
-    /// Represents an internal implementation of <see cref="IResourceStateBuilder"/> interface.
+    /// Initializes a new instance of the <see cref="ResourceStateBuilder"/> class.
     /// </summary>
-    /// <seealso cref="Hal.Builders.Builder" />
-    /// <seealso cref="Hal.Builders.IResourceStateBuilder" />
-    internal sealed class ResourceStateBuilder : Builder, IResourceStateBuilder
+    /// <param name="context">The context.</param>
+    /// <param name="state">The state of the resource.</param>
+    public ResourceStateBuilder(IBuilder context, object state) : base(context)
     {
-        #region Private Fields
-        private readonly object state;
-        #endregion
-
-        #region Ctor        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResourceStateBuilder"/> class.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="state">The state of the resource.</param>
-        public ResourceStateBuilder(IBuilder context, object state) : base(context)
-        {
-            this.state = state;
-        }
-        #endregion
-
-        #region Protected Methods        
-        /// <summary>
-        /// Builds the <see cref="Resource" /> instance.
-        /// </summary>
-        /// <param name="resource"></param>
-        /// <returns>
-        /// The <see cref="Resource" /> instance to be built.
-        /// </returns>
-        protected override Resource DoBuild(Resource resource)
-        {
-            resource.State = this.state;
-            return resource;
-        }
-        #endregion
+        _state = state;
     }
+    #endregion
+
+    #region Protected Methods        
+    /// <summary>
+    /// Builds the <see cref="Resource" /> instance.
+    /// </summary>
+    /// <param name="resource"></param>
+    /// <returns>
+    /// The <see cref="Resource" /> instance to be built.
+    /// </returns>
+    protected override Resource DoBuild(Resource resource)
+    {
+        resource.State = _state;
+        return resource;
+    }
+    #endregion
 }

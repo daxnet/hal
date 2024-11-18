@@ -31,14 +31,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // ---------------------------------------------------------------------------
-namespace Hal.AspNetCore
+namespace Hal.AspNetCore;
+
+/// <summary>
+/// Represents that the decorated methods in a ASP.NET Core Web API controller
+/// could return the resource by using its identifier.
+/// </summary>
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class GetByIdMethodImplAttribute : Attribute
 {
-    /// <summary>
-    /// Represents that the decorated methods in a ASP.NET Core Web API controller
-    /// could return the resource by using its identifier.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class GetByIdMethodImplAttribute : Attribute
-    {
-    }
 }

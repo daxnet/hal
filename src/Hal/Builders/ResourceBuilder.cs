@@ -32,41 +32,40 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
-namespace Hal.Builders
+namespace Hal.Builders;
+
+/// <summary>
+/// Represents that the implemented classes are the HAL resource
+/// builders that simply returned the built HAL resource.
+/// </summary>
+/// <seealso cref="Hal.Builders.IBuilder" />
+public interface IResourceBuilder : IBuilder { }
+
+/// <summary>
+/// Represents the HAL resource builder.
+/// </summary>
+/// <seealso cref="Hal.Builders.IResourceBuilder" />
+public sealed class ResourceBuilder : IResourceBuilder
 {
-    /// <summary>
-    /// Represents that the implemented classes are the HAL resource
-    /// builders that simply returned the built HAL resource.
-    /// </summary>
-    /// <seealso cref="Hal.Builders.IBuilder" />
-    public interface IResourceBuilder : IBuilder { }
+    #region Private Fields
+    private readonly Resource _resource = new Resource();
+    #endregion
 
+    #region Ctor        
     /// <summary>
-    /// Represents the HAL resource builder.
+    /// Initializes a new instance of the <see cref="ResourceBuilder"/> class.
     /// </summary>
-    /// <seealso cref="Hal.Builders.IResourceBuilder" />
-    public sealed class ResourceBuilder : IResourceBuilder
+    public ResourceBuilder() { }
+    #endregion
+
+    #region Public Methods        
+    /// <summary>
+    /// Builds the <see cref="Resource"/> instance.
+    /// </summary>
+    /// <returns>The <see cref="Resource"/> instance to be built.</returns>
+    public Resource Build()
     {
-        #region Private Fields
-        private readonly Resource resource = new Resource();
-        #endregion
-
-        #region Ctor        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResourceBuilder"/> class.
-        /// </summary>
-        public ResourceBuilder() { }
-        #endregion
-
-        #region Public Methods        
-        /// <summary>
-        /// Builds the <see cref="Resource"/> instance.
-        /// </summary>
-        /// <returns>The <see cref="Resource"/> instance to be built.</returns>
-        public Resource Build()
-        {
-            return resource;
-        }
-        #endregion
+        return _resource;
     }
+    #endregion
 }

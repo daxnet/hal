@@ -32,51 +32,50 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
-namespace Hal.Builders
+namespace Hal.Builders;
+
+/// <summary>
+/// Represents the base class for all the HAL builders.
+/// </summary>
+/// <seealso cref="Hal.Builders.IBuilder" />
+public abstract class Builder : IBuilder
 {
+    #region Private Fields
+    private readonly IBuilder _context;
+    #endregion
+
+    #region Ctor        
     /// <summary>
-    /// Represents the base class for all the HAL builders.
+    /// Initializes a new instance of the <see cref="Builder"/> class.
     /// </summary>
-    /// <seealso cref="Hal.Builders.IBuilder" />
-    public abstract class Builder : IBuilder
+    /// <param name="context">The context.</param>
+    protected Builder(IBuilder context)
     {
-        #region Private Fields
-        private readonly IBuilder context;
-        #endregion
-
-        #region Ctor        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Builder"/> class.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        protected Builder(IBuilder context)
-        {
-            this.context = context;
-        }
-        #endregion
-
-        #region Public Methods        
-        /// <summary>
-        /// Builds the <see cref="Resource" /> instance.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Resource" /> instance to be built.
-        /// </returns>
-        public Resource Build()
-        {
-            var resource = this.context.Build();
-            return this.DoBuild(resource);
-        }
-        #endregion
-
-        #region Protected Methods
-        /// <summary>
-        /// Builds the <see cref="Resource" /> instance.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Resource" /> instance to be built.
-        /// </returns>
-        protected abstract Resource DoBuild(Resource resource);
-        #endregion
+        _context = context;
     }
+    #endregion
+
+    #region Public Methods        
+    /// <summary>
+    /// Builds the <see cref="Resource" /> instance.
+    /// </summary>
+    /// <returns>
+    /// The <see cref="Resource" /> instance to be built.
+    /// </returns>
+    public Resource Build()
+    {
+        var resource = _context.Build();
+        return DoBuild(resource);
+    }
+    #endregion
+
+    #region Protected Methods
+    /// <summary>
+    /// Builds the <see cref="Resource" /> instance.
+    /// </summary>
+    /// <returns>
+    /// The <see cref="Resource" /> instance to be built.
+    /// </returns>
+    protected abstract Resource DoBuild(Resource resource);
+    #endregion
 }
