@@ -34,104 +34,103 @@
 
 using System.Linq;
 
-namespace Hal.Builders
+namespace Hal.Builders;
+
+/// <summary>
+/// Represents that the implemented classes are HAL resource builders
+/// that are responsible for adding the <see cref="ILink"/> instance
+/// to the HAL resource.
+/// </summary>
+/// <seealso cref="Hal.Builders.IBuilder" />
+public interface ILinkBuilder : IBuilder
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resource builders
-    /// that are responsible for adding the <see cref="ILink"/> instance
-    /// to the HAL resource.
+    /// Gets the relation of the resource location.
     /// </summary>
-    /// <seealso cref="Hal.Builders.IBuilder" />
-    public interface ILinkBuilder : IBuilder
-    {
-        /// <summary>
-        /// Gets the relation of the resource location.
-        /// </summary>
-        /// <value>
-        /// The relation of the resource location.
-        /// </value>
-        string Rel { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether the generated Json representation should be in an array
-        /// format, even if the number of items is only one.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if the generated Json representation should be in an array
-        /// format; otherwise, <c>false</c>.
-        /// </value>
-        bool EnforcingArrayConverting { get; }
-    }
+    /// <value>
+    /// The relation of the resource location.
+    /// </value>
+    string Rel { get; }
 
     /// <summary>
-    /// Represents an internal implementation of <see cref="ILinkBuilder"/> interface.
+    /// Gets a value indicating whether the generated Json representation should be in an array
+    /// format, even if the number of items is only one.
     /// </summary>
-    /// <seealso cref="Hal.Builders.Builder" />
-    /// <seealso cref="Hal.Builders.ILinkBuilder" />
-    internal sealed class LinkBuilder : Builder, ILinkBuilder
+    /// <value>
+    /// <c>true</c> if the generated Json representation should be in an array
+    /// format; otherwise, <c>false</c>.
+    /// </value>
+    bool EnforcingArrayConverting { get; }
+}
+
+/// <summary>
+/// Represents an internal implementation of <see cref="ILinkBuilder"/> interface.
+/// </summary>
+/// <seealso cref="Hal.Builders.Builder" />
+/// <seealso cref="Hal.Builders.ILinkBuilder" />
+internal sealed class LinkBuilder : Builder, ILinkBuilder
+{
+    #region Private Fields
+    private readonly string _rel;
+    private readonly bool _enforcingArrayConverting;
+    #endregion
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinkBuilder"/> class.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="rel">The relation of the resource location.</param>
+    /// <param name="enforcingArrayConverting">The value indicating whether the generated Json representation should be in an array
+    /// format, even if the number of items is only one.</param>
+    public LinkBuilder(IBuilder context, string rel, bool enforcingArrayConverting) 
+        : base(context)
     {
-        #region Private Fields
-        private readonly string rel;
-        private readonly bool enforcingArrayConverting;
-        #endregion
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LinkBuilder"/> class.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="rel">The relation of the resource location.</param>
-        /// <param name="enforcingArrayConverting">The value indicating whether the generated Json representation should be in an array
-        /// format, even if the number of items is only one.</param>
-        public LinkBuilder(IBuilder context, string rel, bool enforcingArrayConverting) 
-            : base(context)
-        {
-            this.rel = rel;
-            this.enforcingArrayConverting = enforcingArrayConverting;
-        }
-
-        #region Public Properties
-        /// <summary>
-        /// Gets the relation of the resource location.
-        /// </summary>
-        /// <value>
-        /// The relation of the resource location.
-        /// </value>
-        public string Rel => this.rel;
-
-        /// <summary>
-        /// Gets a value indicating whether the generated Json representation should be in an array
-        /// format, even if the number of items is only one.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if the generated Json representation should be in an array
-        /// format; otherwise, <c>false</c>.
-        /// </value>
-        public bool EnforcingArrayConverting => this.enforcingArrayConverting;
-        #endregion
-
-        #region Protected Methods        
-        /// <summary>
-        /// Builds the <see cref="Resource" /> instance.
-        /// </summary>
-        /// <param name="resource"></param>
-        /// <returns>
-        /// The <see cref="Resource" /> instance to be built.
-        /// </returns>
-        protected override Resource DoBuild(Resource resource)
-        {
-            if (resource.Links == null)
-            {
-                resource.Links = new LinkCollection();
-            }
-
-            var link = resource.Links.FirstOrDefault(x => x.Rel.Equals(this.rel));
-            if (link == null)
-            {
-                resource.Links.Add(new Link(this.rel));
-            }
-
-            return resource;
-        }
-        #endregion
+        _rel = rel;
+        _enforcingArrayConverting = enforcingArrayConverting;
     }
+
+    #region Public Properties
+    /// <summary>
+    /// Gets the relation of the resource location.
+    /// </summary>
+    /// <value>
+    /// The relation of the resource location.
+    /// </value>
+    public string Rel => _rel;
+
+    /// <summary>
+    /// Gets a value indicating whether the generated Json representation should be in an array
+    /// format, even if the number of items is only one.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if the generated Json representation should be in an array
+    /// format; otherwise, <c>false</c>.
+    /// </value>
+    public bool EnforcingArrayConverting => _enforcingArrayConverting;
+    #endregion
+
+    #region Protected Methods        
+    /// <summary>
+    /// Builds the <see cref="Resource" /> instance.
+    /// </summary>
+    /// <param name="resource"></param>
+    /// <returns>
+    /// The <see cref="Resource" /> instance to be built.
+    /// </returns>
+    protected override Resource DoBuild(Resource resource)
+    {
+        if (resource.Links == null)
+        {
+            resource.Links = new LinkCollection();
+        }
+
+        var link = resource.Links.FirstOrDefault(x => x.Rel.Equals(_rel));
+        if (link == null)
+        {
+            resource.Links.Add(new Link(_rel));
+        }
+
+        return resource;
+    }
+    #endregion
 }

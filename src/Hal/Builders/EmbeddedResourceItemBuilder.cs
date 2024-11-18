@@ -35,94 +35,93 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hal.Builders
+namespace Hal.Builders;
+
+/// <summary>
+/// Represents that the implemented classes are HAL resource builders that
+/// will add an embedded resource to the embedded resource collection of
+/// the building HAL resource.
+/// </summary>
+/// <seealso cref="Hal.Builders.IBuilder" />
+public interface IEmbeddedResourceItemBuilder : IBuilder
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resource builders that
-    /// will add an embedded resource to the embedded resource collection of
-    /// the building HAL resource.
+    /// Gets the name of the embedded resource collection.
     /// </summary>
-    /// <seealso cref="Hal.Builders.IBuilder" />
-    public interface IEmbeddedResourceItemBuilder : IBuilder
+    /// <value>
+    /// The name.
+    /// </value>
+    string Name { get; }
+}
+
+/// <summary>
+/// Represents an internal implementation of the <see cref="IEmbeddedResourceItemBuilder"/> class.
+/// </summary>
+/// <seealso cref="Hal.Builders.Builder" />
+/// <seealso cref="Hal.Builders.IEmbeddedResourceItemBuilder" />
+internal sealed class EmbeddedResourceItemBuilder : Builder, IEmbeddedResourceItemBuilder
+{
+    #region Private Fields
+    private readonly string _name;
+    private readonly List<IBuilder> _resourceBuilders = new();
+    #endregion
+
+    #region Ctor        
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedResourceItemBuilder"/> class.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="name">The name of the embedded resource collection.</param>
+    /// <param name="resourceBuilders">The resource builders that will build the embedded resource.</param>
+    public EmbeddedResourceItemBuilder(IBuilder context, string name, params IBuilder[] resourceBuilders) : base(context)
     {
-        /// <summary>
-        /// Gets the name of the embedded resource collection.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        string Name { get; }
+        _name = name;
+        _resourceBuilders.AddRange(resourceBuilders);
     }
+    #endregion
+
+    #region Public Properties        
+    /// <summary>
+    /// Gets the name of the embedded resource collection.
+    /// </summary>
+    /// <value>
+    /// The name.
+    /// </value>
+    public string Name => _name;
+    #endregion
+
+    #region Protected Methods
 
     /// <summary>
-    /// Represents an internal implementation of the <see cref="IEmbeddedResourceItemBuilder"/> class.
+    /// Builds the <see cref="Resource" /> instance.
     /// </summary>
-    /// <seealso cref="Hal.Builders.Builder" />
-    /// <seealso cref="Hal.Builders.IEmbeddedResourceItemBuilder" />
-    internal sealed class EmbeddedResourceItemBuilder : Builder, IEmbeddedResourceItemBuilder
+    /// <param name="resource"></param>
+    /// <returns>
+    /// The <see cref="Resource" /> instance to be built.
+    /// </returns>
+    protected override Resource DoBuild(Resource resource)
     {
-        #region Private Fields
-        private readonly string name;
-        private readonly List<IBuilder> resourceBuilders = new();
-        #endregion
-
-        #region Ctor        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EmbeddedResourceItemBuilder"/> class.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="name">The name of the embedded resource collection.</param>
-        /// <param name="resourceBuilders">The resource builders that will build the embedded resource.</param>
-        public EmbeddedResourceItemBuilder(IBuilder context, string name, params IBuilder[] resourceBuilders) : base(context)
+        var embeddedResource =
+            resource.EmbeddedResources?.FirstOrDefault(x =>
+                !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(_name));
+        if (embeddedResource == null)
         {
-            this.name = name;
-            this.resourceBuilders.AddRange(resourceBuilders);
-        }
-        #endregion
-
-        #region Public Properties        
-        /// <summary>
-        /// Gets the name of the embedded resource collection.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        public string Name => this.name;
-        #endregion
-
-        #region Protected Methods
-
-        /// <summary>
-        /// Builds the <see cref="Resource" /> instance.
-        /// </summary>
-        /// <param name="resource"></param>
-        /// <returns>
-        /// The <see cref="Resource" /> instance to be built.
-        /// </returns>
-        protected override Resource DoBuild(Resource resource)
-        {
-            var embeddedResource =
-                resource.EmbeddedResources?.FirstOrDefault(x =>
-                    !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
-            if (embeddedResource == null)
+            embeddedResource = new EmbeddedResource
             {
-                embeddedResource = new EmbeddedResource
-                {
-                    Name = this.name,
-                    Resources = new ResourceCollection()
-                };
+                Name = _name,
+                Resources = new ResourceCollection()
+            };
                 
-                resourceBuilders.ForEach(rb => embeddedResource.Resources.Add(rb.Build()));
-                resource.EmbeddedResources?.Add(embeddedResource);
-            }
-            else
-            {
-                resourceBuilders.ForEach(rb => embeddedResource.Resources.Add(rb.Build()));
-            }
-
-            return resource;
+            _resourceBuilders.ForEach(rb => embeddedResource.Resources.Add(rb.Build()));
+            resource.EmbeddedResources?.Add(embeddedResource);
+        }
+        else
+        {
+            _resourceBuilders.ForEach(rb => embeddedResource.Resources.Add(rb.Build()));
         }
 
-        #endregion
+        return resource;
     }
+
+    #endregion
 }

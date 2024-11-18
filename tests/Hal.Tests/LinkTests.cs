@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Hal.Tests
@@ -19,7 +20,16 @@ namespace Hal.Tests
                 }
             };
 
-            var json = selfLink.ToString();
+            var expected = JToken.Parse("""
+                                        {
+                                            "self": {
+                                                "href": "/orders"
+                                            }
+                                        }
+                                        """);
+            var actual = JToken.Parse("{" + selfLink + "}");
+            
+            Assert.True(JToken.DeepEquals(actual, expected));
         }
 
         [Fact]
@@ -33,7 +43,19 @@ namespace Hal.Tests
                 }
             };
 
-            var json = curiesLink.ToString();
+            var expected = JToken.Parse("""
+                           {
+                               "curies": [
+                                 {
+                                   "name": "ea",
+                                   "href": "http://example.com/docs/rels/{rel}",
+                                   "templated": true
+                                 }
+                               ]
+                           }
+                           """);
+            var actual = JToken.Parse("{" + curiesLink + "}");
+            Assert.True(JToken.DeepEquals(actual, expected));
         }
     }
 }

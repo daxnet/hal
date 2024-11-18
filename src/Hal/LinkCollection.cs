@@ -37,119 +37,118 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Hal
+namespace Hal;
+
+/// <summary>
+/// Represents a collection of links.
+/// </summary>
+public sealed class LinkCollection : ICollection<ILink>
 {
+    #region Private Fields
+    private readonly List<ILink> _links = new List<ILink>();
+    #endregion
+
+    #region Ctor
     /// <summary>
-    /// Represents a collection of links.
+    /// Initializes a new instance of the <see cref="LinkCollection"/> class.
     /// </summary>
-    public sealed class LinkCollection : ICollection<ILink>
+    public LinkCollection()
+    { }
+    #endregion
+
+    #region Public Properties        
+    /// <summary>
+    /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
+    /// </summary>
+    public int Count => _links.Count;
+
+    /// <summary>
+    /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
+    /// </summary>
+    public bool IsReadOnly => false;
+    #endregion
+
+    #region Public Methods        
+    /// <summary>
+    /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
+    /// </summary>
+    /// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+    public void Add(ILink item) => _links.Add(item);
+
+    /// <summary>
+    /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1" />.
+    /// </summary>
+    public void Clear() => _links.Clear();
+
+    /// <summary>
+    /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1" /> contains a specific value.
+    /// </summary>
+    /// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+    /// <returns>
+    /// true if <paramref name="item" /> is found in the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false.
+    /// </returns>
+    public bool Contains(ILink item) => _links.Contains(item);
+
+    /// <summary>
+    /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
+    /// </summary>
+    /// <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+    /// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+    public void CopyTo(ILink[] array, int arrayIndex) => _links.CopyTo(array, arrayIndex);
+
+    /// <summary>
+    /// Returns an enumerator that iterates through the collection.
+    /// </summary>
+    /// <returns>
+    /// An enumerator that can be used to iterate through the collection.
+    /// </returns>
+    public IEnumerator<ILink> GetEnumerator() => _links.GetEnumerator();
+
+    /// <summary>
+    /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1" />.
+    /// </summary>
+    /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+    /// <returns>
+    /// true if <paramref name="item" /> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false. This method also returns false if <paramref name="item" /> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1" />.
+    /// </returns>
+    public bool Remove(ILink item) => _links.Remove(item);
+
+    /// <summary>
+    /// Returns an enumerator that iterates through a collection.
+    /// </summary>
+    /// <returns>
+    /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+    /// </returns>
+    IEnumerator IEnumerable.GetEnumerator() => _links.GetEnumerator();
+
+    /// <summary>
+    /// Returns a <see cref="System.String" /> that represents this instance.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="System.String" /> that represents this instance.
+    /// </returns>
+    public override string ToString() => ToString(new JsonSerializerSettings
     {
-        #region Private Fields
-        private readonly List<ILink> links = new List<ILink>();
-        #endregion
+        NullValueHandling = NullValueHandling.Ignore,
+        Formatting = Formatting.Indented
+    });
 
-        #region Ctor
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LinkCollection"/> class.
-        /// </summary>
-        public LinkCollection()
-        { }
-        #endregion
-
-        #region Public Properties        
-        /// <summary>
-        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </summary>
-        public int Count => links.Count;
-
-        /// <summary>
-        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
-        /// </summary>
-        public bool IsReadOnly => false;
-        #endregion
-
-        #region Public Methods        
-        /// <summary>
-        /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </summary>
-        /// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        public void Add(ILink item) => links.Add(item);
-
-        /// <summary>
-        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </summary>
-        public void Clear() => links.Clear();
-
-        /// <summary>
-        /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1" /> contains a specific value.
-        /// </summary>
-        /// <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <returns>
-        /// true if <paramref name="item" /> is found in the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false.
-        /// </returns>
-        public bool Contains(ILink item) => links.Contains(item);
-
-        /// <summary>
-        /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
-        public void CopyTo(ILink[] array, int arrayIndex) => links.CopyTo(array, arrayIndex);
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// An enumerator that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<ILink> GetEnumerator() => links.GetEnumerator();
-
-        /// <summary>
-        /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </summary>
-        /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <returns>
-        /// true if <paramref name="item" /> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false. This method also returns false if <paramref name="item" /> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </returns>
-        public bool Remove(ILink item) => links.Remove(item);
-
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() => links.GetEnumerator();
-
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
-        public override string ToString() => ToString(new JsonSerializerSettings
+    /// <summary>
+    /// Returns a <see cref="System.String" /> that represents this instance.
+    /// </summary>
+    /// <param name="jsonSerializerSettings">The serialization settings.</param>
+    /// <returns>The string representation of the current instance.</returns>
+    public string ToString(JsonSerializerSettings jsonSerializerSettings)
+    {
+        jsonSerializerSettings.Converters = new List<JsonConverter>
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented
-        });
+            new LinkItemConverter(),
+            new LinkItemCollectionConverter(),
+            new LinkConverter(),
+            new LinkCollectionConverter()
+        };
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <param name="jsonSerializerSettings">The serialization settings.</param>
-        /// <returns>The string representation of the current instance.</returns>
-        public string ToString(JsonSerializerSettings jsonSerializerSettings)
-        {
-            jsonSerializerSettings.Converters = new List<JsonConverter>
-            {
-                new LinkItemConverter(),
-                new LinkItemCollectionConverter(),
-                new LinkConverter(),
-                new LinkCollectionConverter()
-            };
-
-            return JsonConvert.SerializeObject(this, jsonSerializerSettings);
-        }
-        #endregion
+        return JsonConvert.SerializeObject(this, jsonSerializerSettings);
     }
+    #endregion
 }

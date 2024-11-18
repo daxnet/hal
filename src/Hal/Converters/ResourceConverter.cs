@@ -37,121 +37,120 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 
-namespace Hal.Converters
+namespace Hal.Converters;
+
+/// <summary>
+/// Represents the JSON converter for resources.
+/// </summary>
+/// <seealso cref="Newtonsoft.Json.JsonConverter" />
+public sealed class ResourceConverter : JsonConverter
 {
     /// <summary>
-    /// Represents the JSON converter for resources.
+    /// Determines whether this instance can convert the specified object type.
     /// </summary>
-    /// <seealso cref="Newtonsoft.Json.JsonConverter" />
-    public sealed class ResourceConverter : JsonConverter
+    /// <param name="objectType">Type of the object.</param>
+    /// <returns>
+    /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+    /// </returns>
+    public override bool CanConvert(Type objectType)
     {
-        /// <summary>
-        /// Determines whether this instance can convert the specified object type.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <returns>
-        /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(Resource);
-        }
+        return objectType == typeof(Resource);
+    }
 
-        /// <summary>
-        /// Reads the JSON representation of the object.
-        /// </summary>
-        /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="existingValue">The existing value of object being read.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        /// <returns>
-        /// The object value.
-        /// </returns>
-        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-        {
-            return null;
-        }
+    /// <summary>
+    /// Reads the JSON representation of the object.
+    /// </summary>
+    /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
+    /// <param name="objectType">Type of the object.</param>
+    /// <param name="existingValue">The existing value of object being read.</param>
+    /// <param name="serializer">The calling serializer.</param>
+    /// <returns>
+    /// The object value.
+    /// </returns>
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    {
+        return null;
+    }
 
-        /// <summary>
-        /// Writes the JSON representation of the object.
-        /// </summary>
-        /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-        {
-            var resource = (Resource)value!;
-            JToken? obj = null;
+    /// <summary>
+    /// Writes the JSON representation of the object.
+    /// </summary>
+    /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
+    /// <param name="value">The value.</param>
+    /// <param name="serializer">The calling serializer.</param>
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    {
+        var resource = (Resource)value!;
+        JToken? obj = null;
 
-            if (resource.State != null)
+        if (resource.State != null)
+        {
+            obj = JToken.FromObject(resource.State, serializer);
+            if (obj.Type != JTokenType.Object)
             {
-                obj = JToken.FromObject(resource.State, serializer);
-                if (obj != null && obj.Type != JTokenType.Object)
-                {
-                    obj.WriteTo(writer);
-                    return;
-                }
+                obj.WriteTo(writer);
+                return;
             }
+        }
 
+        writer.WriteStartObject();
+
+        if (resource.Links != null && resource.Links.Count > 0)
+        {
+            serializer.Serialize(writer, resource.Links);
+        }
+
+        if (obj != null)
+        {
+            var @object = (JObject)obj;
+            foreach (var prop in @object.Properties())
+            {
+                prop.WriteTo(writer);
+            }
+        }
+
+        if (resource.EmbeddedResources != null && resource.EmbeddedResources.Any())
+        {
+            writer.WritePropertyName("_embedded");
             writer.WriteStartObject();
-
-            if (resource.Links != null && resource.Links.Count > 0)
+            foreach(var embeddedResource in resource.EmbeddedResources)
             {
-                serializer.Serialize(writer, resource.Links);
-            }
-
-            if (obj != null)
-            {
-                var @object = (JObject)obj;
-                foreach (var prop in @object.Properties())
+                if (!string.IsNullOrEmpty(embeddedResource.Name))
                 {
-                    prop.WriteTo(writer);
-                }
-            }
+                    writer.WritePropertyName(embeddedResource.Name!);
 
-            if (resource.EmbeddedResources != null && resource.EmbeddedResources.Count() > 0)
-            {
-                writer.WritePropertyName("_embedded");
-                writer.WriteStartObject();
-                foreach(var embeddedResource in resource.EmbeddedResources)
-                {
-                    if (!string.IsNullOrEmpty(embeddedResource.Name))
+                    embeddedResource.Resources ??= new ResourceCollection();
+                    if (!resource.EmbeddedResources.EnforcingArrayConverting &&
+                        !embeddedResource.EnforcingArrayConverting &&
+                        embeddedResource.Resources.Count == 1)
                     {
-                        writer.WritePropertyName(embeddedResource.Name!);
-
-                        embeddedResource.Resources ??= new ResourceCollection();
-                        if (!resource.EmbeddedResources.EnforcingArrayConverting &&
-                            !embeddedResource.EnforcingArrayConverting &&
-                            embeddedResource.Resources.Count == 1)
+                        //writer.WriteStartObject();
+                        var first = embeddedResource.Resources.First();
+                        WriteJson(writer, first, serializer);
+                        //writer.WriteEndObject();
+                    }
+                    else
+                    {
+                        writer.WriteStartArray();
+                        foreach (var current in embeddedResource.Resources)
                         {
-                            //writer.WriteStartObject();
-                            var first = embeddedResource.Resources.First();
-                            WriteJson(writer, first, serializer);
-                            //writer.WriteEndObject();
+                            WriteJson(writer, current, serializer);
                         }
-                        else
-                        {
-                            writer.WriteStartArray();
-                            foreach (var current in embeddedResource.Resources)
-                            {
-                                WriteJson(writer, current, serializer);
-                            }
-                            writer.WriteEndArray();
-                        }
+                        writer.WriteEndArray();
                     }
                 }
-                writer.WriteEndObject();
             }
-
             writer.WriteEndObject();
         }
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON; otherwise, <c>false</c>.
-        /// </value>
-        public override bool CanRead => false;
+        writer.WriteEndObject();
     }
+
+    /// <summary>
+    /// Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this <see cref="T:Newtonsoft.Json.JsonConverter" /> can read JSON; otherwise, <c>false</c>.
+    /// </value>
+    public override bool CanRead => false;
 }

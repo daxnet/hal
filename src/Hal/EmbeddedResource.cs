@@ -32,49 +32,48 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
-namespace Hal
+namespace Hal;
+
+/// <summary>
+/// Represents the embedded resource in HAL.
+/// </summary>
+/// <seealso cref="Hal.IEmbeddedResource" />
+public sealed class EmbeddedResource : IEmbeddedResource
 {
+    #region Ctor
+
     /// <summary>
-    /// Represents the embedded resource in HAL.
+    /// Initializes a new instance of the <see cref="EmbeddedResource"/> class.
     /// </summary>
-    /// <seealso cref="Hal.IEmbeddedResource" />
-    public sealed class EmbeddedResource : IEmbeddedResource
+    public EmbeddedResource()
     {
-        #region Ctor
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EmbeddedResource"/> class.
-        /// </summary>
-        public EmbeddedResource()
-        {
-            this.Resources = new ResourceCollection();
-        }
-        #endregion
-
-        #region Public Properties        
-        /// <summary>
-        /// Gets or sets the name of the embedded resource.
-        /// </summary>
-        /// <value>
-        /// The name of the embedded resource.
-        /// </value>
-        public string? Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the collection of resources that is represented by current embedded resource
-        /// instance.
-        /// </summary>
-        /// <value>
-        /// The collection of resources that is represented by current embedded resource
-        /// instance.
-        /// </value>
-        public ResourceCollection Resources { get; set; }
-
-        /// <summary>
-        /// Indicates whether the embedded resource state should be always converted as an array
-        /// even if there is only one state for that embedded resource.
-        /// </summary>
-        public bool EnforcingArrayConverting{ get; set; }
-        #endregion
+        this.Resources = new ResourceCollection();
     }
+    #endregion
+
+    #region Public Properties        
+    /// <summary>
+    /// Gets or sets the name of the embedded resource.
+    /// </summary>
+    /// <value>
+    /// The name of the embedded resource.
+    /// </value>
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the collection of resources that is represented by current embedded resource
+    /// instance.
+    /// </summary>
+    /// <value>
+    /// The collection of resources that is represented by current embedded resource
+    /// instance.
+    /// </value>
+    public ResourceCollection Resources { get; set; }
+
+    /// <summary>
+    /// Indicates whether the embedded resource state should be always converted as an array
+    /// even if there is only one state for that embedded resource.
+    /// </summary>
+    public bool EnforcingArrayConverting{ get; set; }
+    #endregion
 }

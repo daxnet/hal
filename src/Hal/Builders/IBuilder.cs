@@ -32,18 +32,17 @@
 // SOFTWARE.
 // ---------------------------------------------------------------------------
 
-namespace Hal.Builders
+namespace Hal.Builders;
+
+/// <summary>
+/// Represents that the implemented classes are the builders that can
+/// build the HAL <see cref="Resource"/> instance.
+/// </summary>
+public interface IBuilder
 {
     /// <summary>
-    /// Represents that the implemented classes are the builders that can
-    /// build the HAL <see cref="Resource"/> instance.
+    /// Builds the <see cref="Resource"/> instance.
     /// </summary>
-    public interface IBuilder
-    {
-        /// <summary>
-        /// Builds the <see cref="Resource"/> instance.
-        /// </summary>
-        /// <returns>The <see cref="Resource"/> instance to be built.</returns>
-        Resource Build();
-    }
+    /// <returns>The <see cref="Resource"/> instance to be built.</returns>
+    Resource Build();
 }

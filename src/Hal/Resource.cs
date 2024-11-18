@@ -36,89 +36,88 @@ using Hal.Converters;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Hal
+namespace Hal;
+
+/// <summary>
+/// Represents a resource in HAL.
+/// </summary>
+/// <seealso cref="Hal.IResource" />
+public sealed class Resource : IResource
 {
-    /// <summary>
-    /// Represents a resource in HAL.
-    /// </summary>
-    /// <seealso cref="Hal.IResource" />
-    public sealed class Resource : IResource
+    #region Private Fields
+    private static readonly List<JsonConverter> Converters = new List<JsonConverter>
     {
-        #region Private Fields
-        private static readonly List<JsonConverter> converters = new List<JsonConverter>
-        {
-            new LinkItemConverter(), new LinkItemCollectionConverter(), new LinkConverter(),
-            new LinkCollectionConverter(), new ResourceConverter()
-        };
+        new LinkItemConverter(), new LinkItemCollectionConverter(), new LinkConverter(),
+        new LinkCollectionConverter(), new ResourceConverter()
+    };
 
-        #endregion
+    #endregion
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Resource"/> class.
-        /// </summary>
-        public Resource() { }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Resource"/> class.
+    /// </summary>
+    public Resource() { }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Resource"/> class.
-        /// </summary>
-        /// <param name="state">The state of the resource.</param>
-        public Resource(object? state)
-        {
-            this.State = state;
-        }
-
-        #region Public Properties        
-        /// <summary>
-        /// Gets the embedded resources.
-        /// </summary>
-        /// <value>
-        /// The embedded resources.
-        /// </value>
-        public EmbeddedResourceCollection? EmbeddedResources { get; set; }
-
-        /// <summary>
-        /// Gets or sets the links.
-        /// </summary>
-        /// <value>
-        /// The links.
-        /// </value>
-        public LinkCollection? Links { get; set; }
-
-        /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
-        /// </summary>
-        /// <value>
-        /// The state of the resource.
-        /// </value>
-        public object? State { get; set; }
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
-        public override string ToString() => ToString(new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented
-        });
-
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <param name="jsonSerializerSettings">The serialization settings.</param>
-        /// <returns>The string representation of the current instance.</returns>
-        public string ToString(JsonSerializerSettings jsonSerializerSettings)
-        {
-            if (jsonSerializerSettings.Converters.Count == 0)
-                jsonSerializerSettings.Converters = converters;
-            return JsonConvert.SerializeObject(this, jsonSerializerSettings);
-        }
-        #endregion
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Resource"/> class.
+    /// </summary>
+    /// <param name="state">The state of the resource.</param>
+    public Resource(object? state)
+    {
+        State = state;
     }
+
+    #region Public Properties        
+    /// <summary>
+    /// Gets the embedded resources.
+    /// </summary>
+    /// <value>
+    /// The embedded resources.
+    /// </value>
+    public EmbeddedResourceCollection? EmbeddedResources { get; set; }
+
+    /// <summary>
+    /// Gets or sets the links.
+    /// </summary>
+    /// <value>
+    /// The links.
+    /// </value>
+    public LinkCollection? Links { get; set; }
+
+    /// <summary>
+    /// Gets or sets the state of the resource, usually it is the object
+    /// that holds the domain information.
+    /// </summary>
+    /// <value>
+    /// The state of the resource.
+    /// </value>
+    public object? State { get; set; }
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Returns a <see cref="System.String" /> that represents this instance.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="System.String" /> that represents this instance.
+    /// </returns>
+    public override string ToString() => ToString(new JsonSerializerSettings
+    {
+        NullValueHandling = NullValueHandling.Ignore,
+        Formatting = Formatting.Indented
+    });
+
+    /// <summary>
+    /// Returns a <see cref="System.String" /> that represents this instance.
+    /// </summary>
+    /// <param name="jsonSerializerSettings">The serialization settings.</param>
+    /// <returns>The string representation of the current instance.</returns>
+    public string ToString(JsonSerializerSettings jsonSerializerSettings)
+    {
+        if (jsonSerializerSettings.Converters.Count == 0)
+            jsonSerializerSettings.Converters = Converters;
+        return JsonConvert.SerializeObject(this, jsonSerializerSettings);
+    }
+    #endregion
 }

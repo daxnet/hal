@@ -35,90 +35,90 @@
 using System;
 using System.Linq;
 
-namespace Hal.Builders
+namespace Hal.Builders;
+
+/// <summary>
+/// Represents that the implemented classes are HAL resource builders
+/// that will initialize the <see cref="IEmbeddedResource"/> collection
+/// on the building resource.
+/// </summary>
+/// <seealso cref="Hal.Builders.IBuilder" />
+public interface IEmbeddedResourceBuilder : IBuilder
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resource builders
-    /// that will initialize the <see cref="IEmbeddedResource"/> collection
-    /// on the building resource.
+    /// Gets the name of the embedded resource collection.
     /// </summary>
-    /// <seealso cref="Hal.Builders.IBuilder" />
-    public interface IEmbeddedResourceBuilder : IBuilder
+    /// <value>
+    /// The name.
+    /// </value>
+    string Name { get; }
+}
+
+/// <summary>
+/// Represents an internal implementation of the <see cref="IEmbeddedResourceBuilder"/> class.
+/// </summary>
+/// <seealso cref="Hal.Builders.Builder" />
+/// <seealso cref="Hal.Builders.IEmbeddedResourceBuilder" />
+internal sealed class EmbeddedResourceBuilder : Builder, IEmbeddedResourceBuilder
+{
+    #region Private Fields
+    private readonly string _name;
+    private readonly bool _enforcingArrayConverting;
+    #endregion
+
+    #region Ctor        
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmbeddedResourceBuilder"/> class.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="name">The name of the embedded resource collection.</param>
+    /// <param name="enforcingArrayConverting">The <see cref="Boolean"/> value which indicates whether the embedded resource state
+    /// should be always converted as an array even if there is only one state for that embedded resource.</param>
+    public EmbeddedResourceBuilder(IBuilder context, string name, bool enforcingArrayConverting = false) : base(context)
     {
-        /// <summary>
-        /// Gets the name of the embedded resource collection.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        string Name { get; }
+        _name = name;
+        _enforcingArrayConverting = enforcingArrayConverting;
     }
+    #endregion
+
+    #region Public Properties
+    /// <summary>
+    /// Gets the name of the embedded resource collection.
+    /// </summary>
+    /// <value>
+    /// The name.
+    /// </value>
+    public string Name => _name;
+    #endregion
+
+    #region Protected Methods
 
     /// <summary>
-    /// Represents an internal implementation of the <see cref="IEmbeddedResourceBuilder"/> class.
+    /// Builds the <see cref="Resource" /> instance.
     /// </summary>
-    /// <seealso cref="Hal.Builders.Builder" />
-    /// <seealso cref="Hal.Builders.IEmbeddedResourceBuilder" />
-    internal sealed class EmbeddedResourceBuilder : Builder, IEmbeddedResourceBuilder
+    /// <param name="resource"></param>
+    /// <returns>
+    /// The <see cref="Resource" /> instance to be built.
+    /// </returns>
+    protected override Resource DoBuild(Resource resource)
     {
-        #region Private Fields
-        private readonly string name;
-        private readonly bool enforcingArrayConverting;
-        #endregion
+        resource.EmbeddedResources ??= new EmbeddedResourceCollection(_enforcingArrayConverting);
 
-        #region Ctor        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EmbeddedResourceBuilder"/> class.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="name">The name of the embedded resource collection.</param>
-        /// <param name="enforcingArrayConverting">The <see cref="Boolean"/> value which indicates whether the embedded resource state
-        /// should be always converted as an array even if there is only one state for that embedded resource.</param>
-        public EmbeddedResourceBuilder(IBuilder context, string name, bool enforcingArrayConverting = false) : base(context)
+        var embeddedResource =
+            resource.EmbeddedResources.FirstOrDefault(x => !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(_name));
+        
+        if (embeddedResource == null)
         {
-            this.name = name;
-            this.enforcingArrayConverting = enforcingArrayConverting;
-        }
-        #endregion
-
-        #region Public Properties
-        /// <summary>
-        /// Gets the name of the embedded resource collection.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        public string Name => this.name;
-        #endregion
-
-        #region Protected Methods        
-        /// <summary>
-        /// Builds the <see cref="Resource" /> instance.
-        /// </summary>
-        /// <param name="resource"></param>
-        /// <returns>
-        /// The <see cref="Resource" /> instance to be built.
-        /// </returns>
-        protected override Resource DoBuild(Resource resource)
-        {
-            if (resource.EmbeddedResources == null)
+            embeddedResource = new EmbeddedResource
             {
-                resource.EmbeddedResources = new EmbeddedResourceCollection(this.enforcingArrayConverting);
-            }
+                Name = _name
+            };
 
-            var embeddedResource = resource.EmbeddedResources.FirstOrDefault(x => !string.IsNullOrEmpty(x.Name) && x.Name!.Equals(this.name));
-            if (embeddedResource == null)
-            {
-                embeddedResource = new EmbeddedResource
-                {
-                    Name = this.name
-                };
-
-                resource.EmbeddedResources.Add(embeddedResource);
-            }
-
-            return resource;
+            resource.EmbeddedResources.Add(embeddedResource);
         }
-        #endregion
+
+        return resource;
     }
+
+    #endregion
 }

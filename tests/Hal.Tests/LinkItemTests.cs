@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json.Linq;
 using Xunit;
 
 
@@ -12,11 +9,24 @@ namespace Hal.Tests
         [Fact]
         public void LinkItemToStringTest()
         {
-            var linkItem = new LinkItem("/orders");
-            linkItem.Name = "ea";
-            linkItem.Templated = true;
+            var linkItem = new LinkItem("/orders")
+            {
+                Name = "ea",
+                Templated = true
+            };
+            
             linkItem.AddProperty("age", 10);
-            var str = linkItem.ToString();
+
+            var expected = JToken.Parse("""
+                                        {
+                                          "name" : "ea",
+                                          "href" : "/orders",
+                                          "templated" : true,
+                                          "age" : 10
+                                        }
+                                        """);
+            var actual = JToken.Parse(linkItem.ToString());
+            Assert.True(JToken.DeepEquals(actual, expected));
         }
     }
 }
