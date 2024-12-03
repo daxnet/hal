@@ -34,7 +34,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Hal.Builders;
@@ -64,10 +63,12 @@ public static class Extensions
     /// </summary>
     /// <param name="builder">The builder.</param>
     /// <param name="rel">The relation of the resource location.</param>
+    /// <param name="enforcingArrayConverting">The value indicating whether the generated Json representation should be in an array
+    /// format, even if the number of items is only one.</param>
     /// <returns></returns>
-    public static ILinkBuilder AddLink(this IResourceStateBuilder builder, string rel)
+    public static ILinkBuilder AddLink(this IResourceStateBuilder builder, string rel, bool enforcingArrayConverting = false)
     {
-        return new LinkBuilder(builder, rel, false);
+        return new LinkBuilder(builder, rel, enforcingArrayConverting);
     }
 
     /// <summary>
@@ -140,10 +141,12 @@ public static class Extensions
     /// </summary>
     /// <param name="builder">The builder.</param>
     /// <param name="rel">The relation of the resource location.</param>
+    /// <param name="enforcingArrayConverting">The value indicating whether the generated Json representation should be in an array
+    /// format, even if the number of items is only one.</param>
     /// <returns></returns>
-    public static ILinkBuilder AddLink(this ILinkItemBuilder builder, string rel)
+    public static ILinkBuilder AddLink(this ILinkItemBuilder builder, string rel, bool enforcingArrayConverting = false)
     {
-        return new LinkBuilder(builder, rel, false);
+        return new LinkBuilder(builder, rel, enforcingArrayConverting);
     }
 
     /// <summary>
@@ -262,10 +265,12 @@ public static class Extensions
     /// </summary>
     /// <param name="builder">The builder.</param>
     /// <param name="rel">The relation of the resource location.</param>
+    /// <param name="enforcingArrayConverting">The value indicating whether the generated Json representation should be in an array
+    /// format, even if the number of items is only one.</param>
     /// <returns></returns>
-    public static ILinkBuilder AddLink(this IEmbeddedResourceItemBuilder builder, string rel)
+    public static ILinkBuilder AddLink(this IEmbeddedResourceItemBuilder builder, string rel, bool enforcingArrayConverting = false)
     {
-        return new LinkBuilder(builder, rel, false);
+        return new LinkBuilder(builder, rel, enforcingArrayConverting);
     }
 
     /// <summary>
